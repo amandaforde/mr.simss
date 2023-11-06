@@ -6,10 +6,12 @@
 \usage{
 split2(
   data,
+  est.lambda = FALSE,
+  lambda.val = 0,
   n.exposure,
   n.outcome,
   n.overlap,
-  correlation,
+  cor.xy,
   pi = 0.5,
   mr_method = "mr_ivw",
   threshold = 5e-08
@@ -19,9 +21,12 @@ split2(
 \item{data}{A data frame to be inputted by the user containing summary
 statistics from the exposure and outcome GWASs. It must have at least five
 columns with column names \code{SNP}, \code{beta.exposure},
-\code{beta.outcome}, \code{se.exposure}, \code{se.outcome} and
-\code{eaf.exposure}. Each row must correspond to a unique SNP, identified by
-\code{SNP}.}
+\code{beta.outcome}, \code{se.exposure}, and \code{se.outcome}. Each row
+must correspond to a unique SNP, identified by \code{SNP}.}
+
+\item{est.lambda}{A logical value.}
+
+\item{lambda.val}{A numerical value.}
 
 \item{n.exposure}{A numerical value to be specified by the user which is equal
 to the number of individuals that were in the exposure GWAS.}
@@ -32,7 +37,7 @@ to the number of individuals that were in the outcome GWAS.}
 \item{n.overlap}{A numerical value to be specified by the user which is equal
 to the number of individuals that were in both the exposure and outcome GWAS.}
 
-\item{correlation}{A numerical value to be specified by the user which is
+\item{cor.xy}{A numerical value to be specified by the user which is
 equal to the observed correlation between the exposure and the outcome. This
 value must be between -1 and 1.}
 

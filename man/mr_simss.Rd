@@ -6,29 +6,32 @@
 \usage{
 mr_simss(
   data,
-  n.exposure,
-  n.outcome,
-  n.overlap,
-  correlation,
-  n.iter = 100,
+  est.lambda = FALSE,
+  lambda.val = 0,
+  n.exposure = 1,
+  n.outcome = 1,
+  n.overlap = 1,
+  cor.xy = 0,
+  n.iter = 1000,
   splits = 2,
   pi = 0.5,
   pi2 = 0.5,
   threshold = 5e-08,
   mr_method = "mr_ivw",
   parallel = TRUE,
-  n.cores = NULL,
-  fun1 = split2,
-  fun2 = split3
+  n.cores = NULL
 )
 }
 \arguments{
 \item{data}{A data frame to be inputted by the user containing summary
 statistics from the exposure and outcome GWASs. It must have at least five
 columns with column names \code{SNP}, \code{beta.exposure},
-\code{beta.outcome}, \code{se.exposure}, \code{se.outcome} and
-\code{eaf.exposure}. Each row must correspond to a unique SNP, identified by
+\code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must correspond to a unique SNP, identified by
 \code{SNP}.}
+
+\item{est.lambda}{A logical value.}
+
+\item{lambda.val}{A numerical value.}
 
 \item{n.exposure}{A numerical value to be specified by the user which is equal
 to the number of individuals that were in the exposure GWAS.}
@@ -39,7 +42,7 @@ to the number of individuals that were in the outcome GWAS.}
 \item{n.overlap}{A numerical value to be specified by the user which is equal
 to the number of individuals that were in both the exposure and outcome GWAS.}
 
-\item{correlation}{A numerical value to be specified by the user which is
+\item{cor.xy}{A numerical value to be specified by the user which is
 equal to the observed correlation between the exposure and the outcome. This
 value must be between -1 and 1.}
 
@@ -65,12 +68,6 @@ be used. The default setting is \code{splits=2}.}
 \item{parallel}{A logical value . The default setting is \code{parallel=TRUE}.}
 
 \item{n.cores}{A numerical value . The default setting is \code{n.cores=NULL}.}
-
-\item{fun1}{The function used in the 2-split approach. This should not be
-changed from \code{fun1=split2}.}
-
-\item{fun2}{The function used in the 3-split approach. This should not be
-changed from \code{fun2=split3}.}
 }
 \value{
 A list

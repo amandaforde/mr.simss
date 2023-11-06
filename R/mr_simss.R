@@ -10,16 +10,17 @@
 #'@param data A data frame to be inputted by the user containing summary
 #' statistics from the exposure and outcome GWASs. It must have at least five
 #' columns with column names \code{SNP}, \code{beta.exposure},
-#' \code{beta.outcome}, \code{se.exposure}, \code{se.outcome} and
-#' \code{eaf.exposure}. Each row must correspond to a unique SNP, identified by
+#' \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must correspond to a unique SNP, identified by
 #' \code{SNP}.
+#'@param est.lambda A logical value.
+#'@param lambda.val A numerical value.
 #'@param n.exposure A numerical value to be specified by the user which is equal
 #' to the number of individuals that were in the exposure GWAS.
 #'@param n.outcome A numerical value to be specified by the user which is equal
 #' to the number of individuals that were in the outcome GWAS.
 #'@param n.overlap A numerical value to be specified by the user which is equal
 #' to the number of individuals that were in both the exposure and outcome GWAS.
-#'@param correlation A numerical value to be specified by the user which is
+#'@param cor.xy A numerical value to be specified by the user which is
 #' equal to the observed correlation between the exposure and the outcome. This
 #' value must be between -1 and 1.
 #'@param n.iter A numerical value which specifies the number of iterations of
@@ -43,18 +44,19 @@
 #' @export
 #'
 
-mr_simss <- function(data,n.exposure,n.outcome,n.overlap,correlation,
+mr_simss <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
                      n.iter=1000,splits=2,pi=0.5,pi2=0.5,threshold=5e-8,mr_method="mr_ivw",
                      parallel=TRUE,n.cores=NULL){
 
   ## ensuring correct use of function
-  stopifnot(all(c("SNP", "beta.exposure","beta.outcome","se.exposure","se.outcome","eaf.exposure") %in% names(data)))
+  stopifnot(all(c("SNP", "beta.exposure","beta.outcome","se.exposure","se.outcome") %in% names(data)))
   stopifnot(splits ==  2 | splits == 3)
-  stopifnot(correlation >= -1 && correlation <= 1)
+  stopifnot(cor.xy >= -1 && cor.xy <= 1)
   stopifnot(pi > 0 && pi < 1 && pi2 > 0 && pi2 < 1)
   stopifnot(mr_method %in% TwoSampleMR::mr_method_list()$obj)
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
+  stopifnot(est.lambda == FALSE && n.exposure > 1 && n.outcome > 1)
 
   if(parallel == TRUE){
     if(is.null(n.cores)){n_cores <- parallel::detectCores()-1}else{n_cores <- n.cores}
@@ -62,9 +64,9 @@ mr_simss <- function(data,n.exposure,n.outcome,n.overlap,correlation,
     doParallel::registerDoParallel(cl = my.cluster)
 
     if(splits==2){
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,n.exposure,n.outcome,n.overlap,correlation,pi,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,mr_method,threshold)}
     }else{
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,n.exposure,n.outcome,n.overlap,correlation,pi,pi2,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,pi2,mr_method,threshold)}
     }
     parallel::stopCluster(cl = my.cluster)
 
@@ -72,12 +74,12 @@ mr_simss <- function(data,n.exposure,n.outcome,n.overlap,correlation,
     results <- c()
     if(splits==2){
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split2(data,n.exposure,n.outcome,n.overlap,correlation,pi,mr_method,threshold)
+        wc_remove <- mr.simss::split2(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }else{
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split3(data,n.exposure,n.outcome,n.overlap,correlation,pi,pi2,mr_method,threshold)
+        wc_remove <- mr.simss::split3(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,pi2,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }

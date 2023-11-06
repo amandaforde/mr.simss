@@ -1,9 +1,9 @@
 Package: mr.simss
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Mendelian Randomisation method that combats Winner's Curse using a simulated sample splitting approach 
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Authors@R: person("Amanda", "Forde", email = "a.forde21@universityofgalway.ie",
+  role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-7940-3413"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: MIT + file LICENSE
@@ -22,5 +22,6 @@ Imports:
     mr.raps,
     stats,
     parallel,
+    pracma,
     tibble,
     TwoSampleMR
