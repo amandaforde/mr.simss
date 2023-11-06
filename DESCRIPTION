@@ -1,11 +1,12 @@
 Package: mr.simss
 Type: Package
-Title: Mendelian Randomisation method that combats Winner's Curse using a simulated sample splitting approach 
+Title: MR-SimSS: Mendelian Randomisation (MR) method that combats Winner's Curse using a simulated sample splitting approach 
 Version: 0.1.0
 Authors@R: person("Amanda", "Forde", email = "a.forde21@universityofgalway.ie",
   role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-7940-3413"))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Designed to provide users with a method, namely MR-SimSS, which uses simulated sample splitting in order to alleviate 
+ Winner's Curse bias in MR causal effect estimates. This approach also takes into account sample overlap between the exposure and outcome genome-wide association studies. It 
+ uses summary statistics from genome-wide association studies and works in combination with existing MR methods, such as IVW and MR-RAPS.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -25,3 +26,7 @@ Imports:
     pracma,
     tibble,
     TwoSampleMR
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

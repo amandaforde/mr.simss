@@ -1,0 +1,24 @@
+url: ~
+
+template:
+  params:
+    bootswatch: lumen
+
+navbar:
+  left:
+    - text: "Articles"
+      href: articles/index.html
+    - text: "Functions"
+      href: reference/index.html
+  right:
+    - text: "Source"
+      href: https://github.com/amandaforde/mr.simss
+
+articles:
+  - title: "Guides"
+    desc: >
+      The following pages provide detailed instructions on how the functions in this package they may be used, together with theoretical derivations.
+    contents:
+      - perform-MR-SimSS
+
+
