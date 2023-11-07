@@ -1,7 +1,8 @@
 # MR-SimSS: Mendelian Randomisation method that combats Winner's Curse using a simulated sample splitting approach
 
-:information\_source: `mr.simss` is still under active development.
+[$\star$]{style="color: green;"} **Note: `mr.simss` is still under active development.** [$\star$]{style="color: green;"}
 
+<br>
 
 This R package, `mr.simss`, ...
 
