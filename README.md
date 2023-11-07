@@ -1,6 +1,6 @@
 # MR-SimSS: Mendelian Randomisation method that combats Winner's Curse using a simulated sample splitting approach
 
-[$\star$]{style="color: green;"} **Note: `mr.simss` is still under active development.** [$\star$]{style="color: green;"}
+**Note: `mr.simss` is still under active development.** 
 
 <br>
 
