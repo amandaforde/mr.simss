@@ -69,8 +69,8 @@
 </h1></div>
 <p><strong>Note: <code>mr.simss</code> is still under active development.</strong></p>
 <p><br></p>
-<p>This R package, <code>mr.simss</code>, …</p>
-<p>Brief introduction …</p>
+<p>This R package, <code>mr.simss</code>, has been designed to allow users to easily implement the Mendelian Randomisation (MR) method, <strong>MR-SimSS</strong>. This method aims to eliminate bias induced by <strong><em>Winner’s Curse</em></strong> in MR causal effect estimates, using <strong>summary statistics</strong> from genome-wide association studies (GWASs). The approach is based on a <strong>repeated simulated sample splitting</strong> procedure and works in combination with existing MR methods, such as IVW and MR-RAPS. It also takes into account any potential sample overlap between the exposure and outcome GWASs and thus, can be applied in both one-sample and two-sample cases.</p>
+<p>The <strong><em>main function</em></strong> in this package for executing <strong>MR-SimSS</strong> is <code>mr_simss</code>. <code>mr_simss</code> has several parameters which users can adjust based on their desired form of method implementation. Further discussion regarding these parameters can be viewed in the first vignette, <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">‘Performing MR-SimSS’</a>. As well as estimates of the SNP-exposure and SNP-outcome associations and corresponding standard errors, the method also requires <em>(a)</em> knowledge of the number of samples in both outcome and exposure GWASs, the number of overlapping samples between the two GWASs, and the correlation between the exposure and the outcome, or <em>(b)</em> an estimate of the correlation between the SNP-outcome and SNP-exposure effect sizes. Due to this, this R package also contains a <strong><em>supplementary function</em></strong>, <code>est_lambda</code>, which allows users to obtain an <em>unbiased</em> estimate for <em>lambda</em>, the correlation between the SNP-outcome and SNP-exposure effect sizes, using a conditional log-likelihood approach. It is recommended to use this function when the fraction of overlap and the correlation between exposure and outcome are unknown. Merely the GWAS <strong>summary statistics</strong> of a large set of <em>unpruned</em> SNPs are required in order to obtain an estimate for <em>lambda</em>.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
@@ -83,14 +83,17 @@
 <div class="section level3">
 <h3 id="winners-curse-in-mr">Winner’s Curse in MR<a class="anchor" aria-label="anchor" href="#winners-curse-in-mr"></a>
 </h3>
+<p><em>small paragraph here detailing the issue of winner’s curse in MR</em></p>
 </div>
 <div class="section level3">
 <h3 id="weak-instrument-bias-in-mr">Weak Instrument Bias in MR<a class="anchor" aria-label="anchor" href="#weak-instrument-bias-in-mr"></a>
 </h3>
+<p><em>small paragraph here detailing the issue of weak instrument bias in MR</em></p>
 </div>
 <div class="section level3">
 <h3 id="mr-simss-overview">MR-SimSS Overview<a class="anchor" aria-label="anchor" href="#mr-simss-overview"></a>
 </h3>
+<p><em>small paragraph here providing brief description of method.. building on what was already stated in the introduction</em></p>
 </div>
 </div>
   </div>
