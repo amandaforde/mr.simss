@@ -38,7 +38,7 @@ Establish function to create toy data set.. specify certain parameters etc....
 After toy data set is made, we can now consider applying method ... detailed discussion of how to do that and the various options included ... 
 
 
-## Using `est_lambda`
+### Using `est_lambda`
 
 
 

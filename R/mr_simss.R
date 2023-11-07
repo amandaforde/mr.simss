@@ -104,7 +104,7 @@ mr_simss <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1
   stopifnot(mr_method %in% TwoSampleMR::mr_method_list()$obj)
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
-  stopifnot(est.lambda == FALSE && n.exposure > 1 && n.outcome > 1)
+  stopifnot(est.lambda == TRUE | (est.lambda == FALSE && n.exposure > 1 && n.outcome > 1))
 
   if(parallel == TRUE){
     if(is.null(n.cores)){n_cores <- parallel::detectCores()-1}else{n_cores <- n.cores}
