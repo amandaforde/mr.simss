@@ -1,33 +1,60 @@
-#' Simulating 2 splits
+#' Simulating 2 splits with MR-SimSS
 #'
-#' @param data A data frame to be inputted by the user containing summary
-#' statistics from the exposure and outcome GWASs. It must have at least five
-#' columns with column names \code{SNP}, \code{beta.exposure},
-#' \code{beta.outcome}, \code{se.exposure}, and \code{se.outcome}. Each row
-#' must correspond to a unique SNP, identified by \code{SNP}.
-#' @param est.lambda A logical value.
-#' @param lambda.val A numerical value.
-#' @param n.exposure A numerical value to be specified by the user which is equal
-#' to the number of individuals that were in the exposure GWAS.
-#' @param n.outcome A numerical value to be specified by the user which is equal
-#' to the number of individuals that were in the outcome GWAS.
-#' @param n.overlap A numerical value to be specified by the user which is equal
-#' to the number of individuals that were in both the exposure and outcome GWAS.
-#' @param cor.xy A numerical value to be specified by the user which is
-#' equal to the observed correlation between the exposure and the outcome. This
-#' value must be between -1 and 1.
-#' @param pi A numerical value. The default setting is \code{pi=0.5}.
-#' @param mr_method A string. The default setting is \code{mr_method="mr_ivw"}.
-#' @param threshold A numerical value. The default setting is
-#'\code{threshold=5e-8}.
+#' \code{split2} is a function which is used by the main function, \code{mr_simss} in order to perform the 2 split approach of the method,  \strong{MR-SimSS}.
 #'
-#' @return A data frame
+#'@param data A data frame to be inputted by the user containing summary
+#'  statistics from the exposure and outcome GWASs. It must have at least five
+#'  columns with column names \code{SNP}, \code{beta.exposure},
+#'  \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
+#'  correspond to a unique SNP, identified by \code{SNP}.
+#'@param est.lambda A logical which allows the user to specify if they have used
+#'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
+#'  term used to describe the correlation between the outcome and exposure
+#'  effect sizes. This correlation is affected by the number of overlapping
+#'  samples between the two GWASs and the correlation between the exposure and
+#'  the outcome. Thus, it is recommended to use \code{est_lambda} if the
+#'  fraction of overlap and the correlation between exposure and outcome are
+#'  unknown. The default setting is \code{est.lambda=FALSE}.
+#'@param lambda.val A numerical value which should be specified by the user if
+#'  \code{est.lambda=TRUE}. It should be equal to the value returned from using
+#'  the function \code{est_lambda}. The default setting is \code{lambda.val=0}.
+#'@param n.exposure A numerical value to be specified by the user which is equal
+#'  to the number of individuals that were in the exposure GWAS. It should be
+#'  specified by the user if \code{est.lambda=FALSE}. The default setting is
+#'  \code{n.exposure=1}.
+#'@param n.outcome A numerical value to be specified by the user which is equal
+#'  to the number of individuals that were in the outcome GWAS. It should be
+#'  specified by the user if \code{est.lambda=FALSE}. The default setting is
+#'  \code{n.outcome=1}.
+#'@param n.overlap A numerical value to be specified by the user which is equal
+#'  to the number of individuals that were in both the exposure and outcome
+#'  GWAS. It should be specified by the user if \code{est.lambda=FALSE}. The
+#'  default setting is \code{n.overlap=1}.
+#'@param cor.xy A numerical value to be specified by the user which is equal to
+#'  the observed correlation between the exposure and the outcome. It should be specified by the user if
+#'  \code{est.lambda=FALSE}. The default setting is \code{cor.xy=0}. If this
+#'  value is unknown, the user is encouraged to use the function
+#'  \code{est_lambda}.
+#'@param pi A numerical value which determines the fraction of the first split. This is the fraction that will be used
+#'  for SNP selection. The default setting is \code{pi=0.5}.
+#'@param mr_method A string which specifies the MR method that MR-SimSS works in
+#'  combination with. It is possible to use any method outputted in the list
+#'  \code{TwoSampleMR::mr_method_list()$obj}. However, it is currently advised
+#'  that the user chooses \code{"mr_ivw"} or \code{"mr_raps"}. The default
+#'  setting is \code{mr_method="mr_ivw"}.
+#'@param threshold A numerical value which specifies the threshold used to
+#'  select instrument SNPs for MR at each iteration. The default setting is
+#'  \code{threshold=5e-8}.
+#'
+#' @return A data frame which contains
+#'  the output from one iteration. It is in a similar style as the output from
+#'  using the function \code{mr} from the \code{TwoSampleMR} R package. The MR method used, the number of instrument SNPs, the causal effect estimate, it associated standard error and \emph{p}-value are all outputted.
 #' @importFrom magrittr %>%
 #' @export
 #'
 
 
-split2 <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure,n.outcome,n.overlap,cor.xy,pi=0.5,mr_method="mr_ivw", threshold=5e-8){
+split2 <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,pi=0.5,mr_method="mr_ivw", threshold=5e-8){
 
   if(est.lambda==TRUE){
     lambda <- lambda.val

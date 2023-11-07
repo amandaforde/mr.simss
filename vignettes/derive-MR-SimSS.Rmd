@@ -1,0 +1,23 @@
+---
+title: "Deriving MR-SimSS"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Deriving MR-SimSS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(mr.simss)
+```
+
+
+
+Deriving the method ... this will include a lot of details that are already included in the html file online ... 
