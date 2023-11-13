@@ -6,6 +6,8 @@
 \usage{
 mr_simss(
   data,
+  subset = FALSE,
+  sub.cut = 0.05,
   est.lambda = FALSE,
   lambda.val = 0,
   n.exposure = 1,
@@ -29,14 +31,24 @@ columns with column names \code{SNP}, \code{beta.exposure},
 \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 correspond to a unique SNP, identified by \code{SNP}.}
 
+\item{subset}{A logical which permits the user to perform this method with
+either the original complete set of SNPs or a subset of SNPs in order to
+reduce computational time. The default setting is \code{subset=FALSE}.}
+
+\item{sub.cut}{A numerical value required if \code{subset=TRUE}, which ensures
+that for a single iteration of our method, the number of instruments
+selected if the full set of SNPs is used and the number of instruments if
+merely the subset is used will be equal with probability at least
+\code{1-sub.cut}.}
+
 \item{est.lambda}{A logical which allows the user to specify if they have used
 the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
-term used to describe the correlation between the SNP-outcome and SNP-exposure
-effect sizes. This correlation is affected by the number of overlapping
-samples between the two GWASs and the correlation between the exposure and
-the outcome. Thus, it is recommended to use \code{est_lambda} if the
-fraction of overlap and the correlation between exposure and outcome are
-unknown. The default setting is \code{est.lambda=FALSE}.}
+term used to describe the correlation between the SNP-outcome and
+SNP-exposure effect sizes. This correlation is affected by the number of
+overlapping samples between the two GWASs and the correlation between the
+exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
+if the fraction of overlap and the correlation between exposure and outcome
+are unknown. The default setting is \code{est.lambda=FALSE}.}
 
 \item{lambda.val}{A numerical value which should be specified by the user if
 \code{est.lambda=TRUE}. It should be equal to the value returned from using
@@ -107,18 +119,19 @@ The default setting is \code{n.cores=NULL}.}
 }
 \value{
 A list containing two elements, \code{summary} and \code{results}.
-\code{summary} is a data frame with one row which outputs \code{b}, the estimated causal
-effect of exposure on outcome obtained using the \strong{MR-SimSS} method, as well as
-\code{se}, the associated standard error of this estimate and \code{pval},
-corresponding \emph{p}-value. It also contains the MR method
-used, the average number of instrument SNPs used in each iteration and the
-number of iterations used. \code{results} is a data frame which contains
-the output from each iteration. It is in a similar style as the output from
-using the function \code{mr} from the \code{TwoSampleMR} R package.
+\code{summary} is a data frame with one row which outputs \code{b}, the
+estimated causal effect of exposure on outcome obtained using the
+\strong{MR-SimSS} method, as well as \code{se}, the associated standard
+error of this estimate and \code{pval}, corresponding \emph{p}-value. It
+also contains the MR method used, the average number of instrument SNPs used
+in each iteration and the number of iterations used. \code{results} is a
+data frame which contains the output from each iteration. It is in a similar
+style as the output from using the function \code{mr} from the
+\code{TwoSampleMR} R package.
 }
 \description{
-\code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which is a
-method based on simulated sample splitting in order to alleviate
+\code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which
+is a method based on simulated sample splitting in order to alleviate
 \emph{Winner's Curse} bias in MR causal effect estimates. It also takes into
 account sample overlap between the exposure and outcome GWASs. It uses GWAS
 summary statistics and works in combination with existing MR methods, such as

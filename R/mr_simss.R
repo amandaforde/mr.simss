@@ -1,7 +1,7 @@
 #'MR-SimSS main function
 #'
-#'\code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which is a
-#'method based on simulated sample splitting in order to alleviate
+#'\code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which
+#'is a method based on simulated sample splitting in order to alleviate
 #'\emph{Winner's Curse} bias in MR causal effect estimates. It also takes into
 #'account sample overlap between the exposure and outcome GWASs. It uses GWAS
 #'summary statistics and works in combination with existing MR methods, such as
@@ -12,14 +12,22 @@
 #'  columns with column names \code{SNP}, \code{beta.exposure},
 #'  \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 #'  correspond to a unique SNP, identified by \code{SNP}.
+#'@param subset A logical which permits the user to perform this method with
+#'  either the original complete set of SNPs or a subset of SNPs in order to
+#'  reduce computational time. The default setting is \code{subset=FALSE}.
+#'@param sub.cut A numerical value required if \code{subset=TRUE}, which ensures
+#'  that for a single iteration of our method, the number of instruments
+#'  selected if the full set of SNPs is used and the number of instruments if
+#'  merely the subset is used will be equal with probability at least
+#'  \code{1-sub.cut}.
 #'@param est.lambda A logical which allows the user to specify if they have used
 #'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
-#'  term used to describe the correlation between the SNP-outcome and SNP-exposure
-#'  effect sizes. This correlation is affected by the number of overlapping
-#'  samples between the two GWASs and the correlation between the exposure and
-#'  the outcome. Thus, it is recommended to use \code{est_lambda} if the
-#'  fraction of overlap and the correlation between exposure and outcome are
-#'  unknown. The default setting is \code{est.lambda=FALSE}.
+#'  term used to describe the correlation between the SNP-outcome and
+#'  SNP-exposure effect sizes. This correlation is affected by the number of
+#'  overlapping samples between the two GWASs and the correlation between the
+#'  exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
+#'  if the fraction of overlap and the correlation between exposure and outcome
+#'  are unknown. The default setting is \code{est.lambda=FALSE}.
 #'@param lambda.val A numerical value which should be specified by the user if
 #'  \code{est.lambda=TRUE}. It should be equal to the value returned from using
 #'  the function \code{est_lambda}. The default setting is \code{lambda.val=0}.
@@ -76,14 +84,15 @@
 #'  The default setting is \code{n.cores=NULL}.
 #'
 #'@return A list containing two elements, \code{summary} and \code{results}.
-#'  \code{summary} is a data frame with one row which outputs \code{b}, the estimated causal
-#'  effect of exposure on outcome obtained using the \strong{MR-SimSS} method, as well as
-#'  \code{se}, the associated standard error of this estimate and \code{pval},
-#'  corresponding \emph{p}-value. It also contains the MR method
-#'  used, the average number of instrument SNPs used in each iteration and the
-#'  number of iterations used. \code{results} is a data frame which contains
-#'  the output from each iteration. It is in a similar style as the output from
-#'  using the function \code{mr} from the \code{TwoSampleMR} R package.
+#'  \code{summary} is a data frame with one row which outputs \code{b}, the
+#'  estimated causal effect of exposure on outcome obtained using the
+#'  \strong{MR-SimSS} method, as well as \code{se}, the associated standard
+#'  error of this estimate and \code{pval}, corresponding \emph{p}-value. It
+#'  also contains the MR method used, the average number of instrument SNPs used
+#'  in each iteration and the number of iterations used. \code{results} is a
+#'  data frame which contains the output from each iteration. It is in a similar
+#'  style as the output from using the function \code{mr} from the
+#'  \code{TwoSampleMR} R package.
 #'@seealso
 #'\url{https://amandaforde.github.io/mr.simss/articles/perform-MR-SimSS.html}
 #'for illustration of the use of \code{mr_simss} with a toy data set and further
@@ -92,7 +101,7 @@
 #'@export
 #'
 
-mr_simss <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
+mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
                      n.iter=1000,splits=2,pi=0.5,pi2=0.5,threshold=5e-8,mr_method="mr_ivw",
                      parallel=TRUE,n.cores=NULL){
 
@@ -105,6 +114,15 @@ mr_simss <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
   stopifnot(est.lambda == TRUE | (est.lambda == FALSE && n.exposure > 1 && n.outcome > 1))
+
+  if(subset == TRUE){
+    thresh1 <- stats::qnorm((threshold)/2, lower.tail=FALSE)
+    data$mu.exposure1 <- data$beta.exposure/sqrt(((1)/(pi))*(data$se.exposure)^2)
+    data$p.exposure1 <- pnorm((-thresh1 + data$mu.exposure1)/(sqrt(1-pi))) + pnorm((-thresh1 - data$mu.exposure1)/(sqrt(1-pi)))
+    data1 <- data[order(data$p.exposure1,decreasing=FALSE),]
+    data1$cumul.sum <- cumsum(data1$p.exposure1)
+    data <- data1[-which(data1$cumul.sum < sub.cut),]
+  }
 
   if(parallel == TRUE){
     if(is.null(n.cores)){n_cores <- parallel::detectCores()-1}else{n_cores <- n.cores}
