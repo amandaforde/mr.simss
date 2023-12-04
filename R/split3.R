@@ -74,9 +74,28 @@ split3 <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n
   cond_cov_array[1,2,] <- cond_cov_array[2,1,]
   cond_cov_array[2,2,] <- cond_var_gy
 
-  summary_stats_sub <- apply(cond_cov_array, 3, function(x) {MASS::mvrnorm(n=1, mu=c(0,0), Sigma=x)})
+  #summary_stats_sub <- apply(cond_cov_array, 3, function(x) {MASS::mvrnorm(n=1, mu=c(0,0), Sigma=x)})
+  # mvrnorm replaced by the following:
+  tr_vec <- apply(cond_cov_array,3,function(x){x[1,1]+x[2,2]})
+  s_vec <- apply(cond_cov_array,3,function(x){sqrt(sum(x[1,1]*x[2,2]-x[1,2]*x[2,1]))})
+  t_vec <- sqrt(tr_vec+2*s_vec)
+  s_vec <- rep(s_vec,times=rep(4,nrow(data)))
+  I_vec <- rep(c(1,0,0,1),times=rep(nrow(data)))
+  t_vec <- rep(t_vec,times=rep(4,nrow(data)))
+  sqrt_array <- array((as.vector(cond_cov_array)+s_vec*I_vec)/t_vec,dim=c(2,2,nrow(data)))
 
-  summary_stats_sub1 <- t(summary_stats_sub + rbind(data$beta.exposure, data$beta.outcome))
+  Z_array <- array(stats::rnorm(2*nrow(data)),dim=c(1,2,nrow(data)))
+  Z_array <- abind::abind(Z_array,Z_array,along=1)
+  sqrt_array_normal <- sqrt_array*Z_array
+  # rearrange array so to use matrix multiplication
+  sqrt_array_normal <- aperm(a=sqrt_array_normal,perm=c(3,1,2))
+  dim1 <- sqrt_array_normal[,1,] %*% matrix(c(1,1),nrow=2)
+  dim2 <- sqrt_array_normal[,2,] %*% matrix(c(1,1),nrow=2)
+  summary_stats_sub <- cbind(dim1,dim2)
+
+  summary_stats_sub1 <- (summary_stats_sub + cbind(data$beta.exposure, data$beta.outcome))
+  #summary_stats_sub1 <- t(summary_stats_sub + rbind(data$beta.exposure, data$beta.outcome))
+
   colnames(summary_stats_sub1) <- c("beta.exposure.1", "beta.outcome.1")
   data <- cbind(data, summary_stats_sub1)
 
@@ -101,9 +120,28 @@ split3 <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n
     cond_cov_array[1,2,] <- cond_cov_array[2,1,]
     cond_cov_array[2,2,] <- cond_var_gy
 
-    summary_stats_sub <- apply(cond_cov_array, 3, function(x) {MASS::mvrnorm(n=1, mu=c(0,0), Sigma=x)})
+    #summary_stats_sub <- apply(cond_cov_array, 3, function(x) {MASS::mvrnorm(n=1, mu=c(0,0), Sigma=x)})
+    # mvrnorm replaced by the following:
+    tr_vec <- apply(cond_cov_array,3,function(x){x[1,1]+x[2,2]})
+    s_vec <- apply(cond_cov_array,3,function(x){sqrt(sum(x[1,1]*x[2,2]-x[1,2]*x[2,1]))})
+    t_vec <- sqrt(tr_vec+2*s_vec)
+    s_vec <- rep(s_vec,times=rep(4,nrow(data)))
+    I_vec <- rep(c(1,0,0,1),times=rep(nrow(data)))
+    t_vec <- rep(t_vec,times=rep(4,nrow(data)))
+    sqrt_array <- array((as.vector(cond_cov_array)+s_vec*I_vec)/t_vec,dim=c(2,2,nrow(data)))
 
-    summary_stats_sub2 <- t(summary_stats_sub + rbind(beta.exposure.2, beta.outcome.2))
+    Z_array <- array(stats::rnorm(2*nrow(data)),dim=c(1,2,nrow(data)))
+    Z_array <- abind::abind(Z_array,Z_array,along=1)
+    sqrt_array_normal <- sqrt_array*Z_array
+    # rearrange array so to use matrix multiplication
+    sqrt_array_normal <- aperm(a=sqrt_array_normal,perm=c(3,1,2))
+    dim1 <- sqrt_array_normal[,1,] %*% matrix(c(1,1),nrow=2)
+    dim2 <- sqrt_array_normal[,2,] %*% matrix(c(1,1),nrow=2)
+    summary_stats_sub <- cbind(dim1,dim2)
+
+    summary_stats_sub2 <- (summary_stats_sub + cbind(beta.exposure.2, beta.outcome.2))
+    #summary_stats_sub2 <- t(summary_stats_sub + rbind(beta.exposure.2, beta.outcome.2))
+
     colnames(summary_stats_sub2) <- c("beta.exposure.2a", "beta.outcome.2a")
     data <- cbind(data, summary_stats_sub2)
 
