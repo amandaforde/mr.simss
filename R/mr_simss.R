@@ -118,7 +118,7 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=
   if(subset == TRUE){
     thresh1 <- stats::qnorm((threshold)/2, lower.tail=FALSE)
     data$mu.exposure1 <- data$beta.exposure/sqrt(((1)/(pi))*(data$se.exposure)^2)
-    data$p.exposure1 <- pnorm((-thresh1 + data$mu.exposure1)/(sqrt(1-pi))) + pnorm((-thresh1 - data$mu.exposure1)/(sqrt(1-pi)))
+    data$p.exposure1 <- stats::pnorm((-thresh1 + data$mu.exposure1)/(sqrt(1-pi))) + stats::pnorm((-thresh1 - data$mu.exposure1)/(sqrt(1-pi)))
     data1 <- data[order(data$p.exposure1,decreasing=FALSE),]
     data1$cumul.sum <- cumsum(data1$p.exposure1)
     data <- data1[-which(data1$cumul.sum < sub.cut),]

@@ -25,7 +25,8 @@ Imports:
     parallel,
     pracma,
     tibble,
-    TwoSampleMR
+    TwoSampleMR,
+    abind
 Suggests: 
     knitr,
     rmarkdown
