@@ -44,7 +44,7 @@ est_lambda <- function(data,z.threshold=0.5){
   fun_obj <- function(lambda){
     - ((1)/(2*(1-lambda^2)))*(A-2*lambda*B+C) - n*log((pracma::integral2(function(x,y)
       exp((-(1)/(2*(1-lambda^2)))*(x^2-2*lambda*x*y+y^2)),
-      xmin = -0.5,xmax = 0.5, ymin = -0.5, ymax = 0.5)$Q))
+      xmin = -z.threshold,xmax = z.threshold, ymin = -z.threshold, ymax = z.threshold)$Q))
   }
 
   est.lambda <- stats::optimize(fun_obj, interval=c(-1,1),maximum=TRUE)$maximum
