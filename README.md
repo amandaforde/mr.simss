@@ -1,4 +1,4 @@
-# MR-SimSS: Mendelian Randomisation method that combats Winner's Curse using a simulated sample splitting approach
+# MR-SimSS: Mendelian Randomisation framework that combats Winner's Curse using a simulated sample splitting approach
 
 **Note: `mr.simss` is still under active development.** 
 
