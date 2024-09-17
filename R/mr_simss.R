@@ -115,7 +115,6 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1
   stopifnot(mr_method %in% TwoSampleMR::mr_method_list()$obj)
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
-  stopifnot(est.lambda == TRUE | (est.lambda == FALSE && n.exposure > 1 && n.outcome > 1))
 
   ## work out lambda here
   if(est.lambda==TRUE){
