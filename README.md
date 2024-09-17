@@ -1,6 +1,6 @@
 # Simulated sample splitting to overcome Winner’s Curse in summary-level Mendelian Randomization
 
-<span style="color:darkred;">**Note: `mr.simss` is still under active development.**</span>
+<span style="color:darkred;">Note: `mr.simss` is still under active development.</span>
  
 
 <br>
