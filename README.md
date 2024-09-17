@@ -1,8 +1,7 @@
 # Simulated sample splitting to overcome Winner’s Curse in summary-level Mendelian Randomization
 
-<span style="color:darkred;">Note: `mr.simss` is still under active development.</span>
+<span style="color:darkred;">**Note: `mr.simss` is still under active development.**</span>
  
-
 <br>
 
 This R package, `mr.simss`, has been designed to allow users to easily implement the Mendelian Randomisation (MR) method, **MR-SimSS**. This method aims to eliminate bias induced by ***Winner's Curse*** in MR causal effect estimates, using **summary statistics** from genome-wide association studies (GWASs). The approach is based on a **repeated simulated sample splitting** procedure and works in combination with existing MR methods, such as IVW and MR-RAPS. It also takes into account any potential ***sample overlap*** between the exposure and outcome GWASs and thus, can be applied in both one-sample and two-sample cases. 
