@@ -50,3 +50,5 @@ est_lambda <- function(data,z.threshold=0.5){
   est.lambda <- stats::optimize(fun_obj, interval=c(-1,1),maximum=TRUE)$maximum
   return(est.lambda)
 }
+
+

@@ -4,18 +4,7 @@
 \alias{split2}
 \title{Simulating 2 splits with MR-SimSS}
 \usage{
-split2(
-  data,
-  est.lambda = FALSE,
-  lambda.val = 0,
-  n.exposure = 1,
-  n.outcome = 1,
-  n.overlap = 1,
-  cor.xy = 0,
-  pi = 0.5,
-  mr_method = "mr_ivw",
-  threshold = 5e-08
-)
+split2(data, lambda.val = 0, pi = 0.5, mr_method = "mr_ivw", threshold = 5e-08)
 }
 \arguments{
 \item{data}{A data frame to be inputted by the user containing summary
@@ -24,39 +13,9 @@ columns with column names \code{SNP}, \code{beta.exposure},
 \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 correspond to a unique SNP, identified by \code{SNP}.}
 
-\item{est.lambda}{A logical which allows the user to specify if they have used
-the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
-term used to describe the correlation between the outcome and exposure
-effect sizes. This correlation is affected by the number of overlapping
-samples between the two GWASs and the correlation between the exposure and
-the outcome. Thus, it is recommended to use \code{est_lambda} if the
-fraction of overlap and the correlation between exposure and outcome are
-unknown. The default setting is \code{est.lambda=FALSE}.}
-
-\item{lambda.val}{A numerical value which should be specified by the user if
-\code{est.lambda=TRUE}. It should be equal to the value returned from using
-the function \code{est_lambda}. The default setting is \code{lambda.val=0}.}
-
-\item{n.exposure}{A numerical value to be specified by the user which is equal
-to the number of individuals that were in the exposure GWAS. It should be
-specified by the user if \code{est.lambda=FALSE}. The default setting is
-\code{n.exposure=1}.}
-
-\item{n.outcome}{A numerical value to be specified by the user which is equal
-to the number of individuals that were in the outcome GWAS. It should be
-specified by the user if \code{est.lambda=FALSE}. The default setting is
-\code{n.outcome=1}.}
-
-\item{n.overlap}{A numerical value to be specified by the user which is equal
-to the number of individuals that were in both the exposure and outcome
-GWAS. It should be specified by the user if \code{est.lambda=FALSE}. The
-default setting is \code{n.overlap=1}.}
-
-\item{cor.xy}{A numerical value to be specified by the user which is equal to
-the observed correlation between the exposure and the outcome. It should be specified by the user if
-\code{est.lambda=FALSE}. The default setting is \code{cor.xy=0}. If this
-value is unknown, the user is encouraged to use the function
-\code{est_lambda}.}
+\item{lambda.val}{A numerical value which is computed within the main function, \code{mr_simss}.
+It is an estimate of \emph{lambda}, a term used to describe the correlation between the SNP-outcome and
+SNP-exposure effect sizes. The default setting is \code{lambda.val=0}.}
 
 \item{pi}{A numerical value which determines the fraction of the first split. This is the fraction that will be used
 for SNP selection. The default setting is \code{pi=0.5}.}

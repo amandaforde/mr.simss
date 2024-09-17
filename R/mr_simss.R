@@ -20,17 +20,14 @@
 #'  selected if the full set of SNPs is used and the number of instruments if
 #'  merely the subset is used will be equal with probability at least
 #'  \code{1-sub.cut}.
-#'@param est.lambda A logical which allows the user to specify if they have used
+#'@param est.lambda A logical which allows the user to specify if they want to use
 #'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
 #'  term used to describe the correlation between the SNP-outcome and
 #'  SNP-exposure effect sizes. This correlation is affected by the number of
 #'  overlapping samples between the two GWASs and the correlation between the
 #'  exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
 #'  if the fraction of overlap and the correlation between exposure and outcome
-#'  are unknown. The default setting is \code{est.lambda=FALSE}.
-#'@param lambda.val A numerical value which should be specified by the user if
-#'  \code{est.lambda=TRUE}. It should be equal to the value returned from using
-#'  the function \code{est_lambda}. The default setting is \code{lambda.val=0}.
+#'  are unknown. The default setting is \code{est.lambda=TRUE}.
 #'@param n.exposure A numerical value to be specified by the user which is equal
 #'  to the number of individuals that were in the exposure GWAS. It should be
 #'  specified by the user if \code{est.lambda=FALSE}. The default setting is
@@ -82,6 +79,11 @@
 #'  if \code{parallel=TRUE}. This value should be supplied by the user if they
 #'  wish to use less cores than the output of \code{parallel::detectCores()-1}.
 #'  The default setting is \code{n.cores=NULL}.
+#'@param lambda.thresh A value which is used when estimating \emph{lambda} to
+#'  obtain a subset of SNPs which have absolute \emph{z}-statistics for both exposure and outcome GWASs less than
+#'  this value. The method then assumes that both of the true SNP-outcome and
+#'  SNP-exposure effect sizes of each SNP in this subset are approximately 0.
+#'  The default setting is \code{lambda.thresh=0.5}.
 #'
 #'@return A list containing two elements, \code{summary} and \code{results}.
 #'  \code{summary} is a data frame with one row which outputs \code{b}, the
@@ -101,9 +103,9 @@
 #'@export
 #'
 
-mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
+mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
                      n.iter=1000,splits=2,pi=0.5,pi2=0.5,threshold=5e-8,mr_method="mr_ivw",
-                     parallel=TRUE,n.cores=NULL){
+                     parallel=TRUE,n.cores=NULL,lambda.thresh=0.5){
 
   ## ensuring correct use of function
   stopifnot(all(c("SNP", "beta.exposure","beta.outcome","se.exposure","se.outcome") %in% names(data)))
@@ -114,6 +116,13 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
   stopifnot(est.lambda == TRUE | (est.lambda == FALSE && n.exposure > 1 && n.outcome > 1))
+
+  ## work out lambda here
+  if(est.lambda==TRUE){
+    lambda <- mr.simss::est_lambda(data,z.threshold=lambda.thresh)
+  }else{
+    lambda <- (n.overlap*cor.xy)/(sqrt(n.exposure*n.outcome))
+  }
 
   if(subset == TRUE){
     thresh1 <- stats::qnorm((threshold)/2, lower.tail=FALSE)
@@ -130,9 +139,9 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=
     doParallel::registerDoParallel(cl = my.cluster)
 
     if(splits==2){
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,lambda.val=lambda,pi,mr_method,threshold)}
     }else{
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,pi2,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,lambda.val=lambda,pi,pi2,mr_method,threshold)}
     }
     parallel::stopCluster(cl = my.cluster)
 
@@ -140,12 +149,12 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=FALSE,lambda.val=
     results <- c()
     if(splits==2){
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split2(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,mr_method,threshold)
+        wc_remove <- mr.simss::split2(data,lambda.val=lambda,pi,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }else{
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split3(data,est.lambda,lambda.val,n.exposure,n.outcome,n.overlap,cor.xy,pi,pi2,mr_method,threshold)
+        wc_remove <- mr.simss::split3(data,lambda.val=lambda,pi,pi2,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }

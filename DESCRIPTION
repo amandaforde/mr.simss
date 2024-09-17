@@ -2,7 +2,7 @@ Package: mr.simss
 Type: Package
 Title: MR-SimSS: Mendelian Randomisation (MR) method that combats Winner's Curse using a simulated sample splitting approach 
 Version: 0.1.0
-Authors@R: person("Amanda", "Forde", email = "a.forde21@universityofgalway.ie",
+Authors@R: person("Amanda", "Forde", email = "amanda.forde@universityofgalway.ie",
   role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-7940-3413"))
 Description: Designed to provide users with a method, namely MR-SimSS, which uses simulated sample splitting in order to alleviate 
  Winner's Curse bias in MR causal effect estimates. This approach also takes into account sample overlap between the exposure and outcome genome-wide association studies. It 
@@ -18,7 +18,6 @@ Imports:
     dplyr,
     doParallel,
     foreach,
-    MASS,
     magrittr,
     mr.raps,
     stats,
@@ -27,6 +26,8 @@ Imports:
     tibble,
     TwoSampleMR,
     abind
+Remotes: 
+    MRCIEU/TwoSampleMR
 Suggests: 
     knitr,
     rmarkdown

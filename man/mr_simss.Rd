@@ -8,8 +8,7 @@ mr_simss(
   data,
   subset = FALSE,
   sub.cut = 0.05,
-  est.lambda = FALSE,
-  lambda.val = 0,
+  est.lambda = TRUE,
   n.exposure = 1,
   n.outcome = 1,
   n.overlap = 1,
@@ -21,7 +20,8 @@ mr_simss(
   threshold = 5e-08,
   mr_method = "mr_ivw",
   parallel = TRUE,
-  n.cores = NULL
+  n.cores = NULL,
+  lambda.thresh = 0.5
 )
 }
 \arguments{
@@ -41,18 +41,14 @@ selected if the full set of SNPs is used and the number of instruments if
 merely the subset is used will be equal with probability at least
 \code{1-sub.cut}.}
 
-\item{est.lambda}{A logical which allows the user to specify if they have used
+\item{est.lambda}{A logical which allows the user to specify if they want to use
 the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
 term used to describe the correlation between the SNP-outcome and
 SNP-exposure effect sizes. This correlation is affected by the number of
 overlapping samples between the two GWASs and the correlation between the
 exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
 if the fraction of overlap and the correlation between exposure and outcome
-are unknown. The default setting is \code{est.lambda=FALSE}.}
-
-\item{lambda.val}{A numerical value which should be specified by the user if
-\code{est.lambda=TRUE}. It should be equal to the value returned from using
-the function \code{est_lambda}. The default setting is \code{lambda.val=0}.}
+are unknown. The default setting is \code{est.lambda=TRUE}.}
 
 \item{n.exposure}{A numerical value to be specified by the user which is equal
 to the number of individuals that were in the exposure GWAS. It should be
@@ -116,6 +112,12 @@ to use this function in parallel or in series. The default setting is
 if \code{parallel=TRUE}. This value should be supplied by the user if they
 wish to use less cores than the output of \code{parallel::detectCores()-1}.
 The default setting is \code{n.cores=NULL}.}
+
+\item{lambda.thresh}{A value which is used when estimating \emph{lambda} to
+obtain a subset of SNPs which have absolute \emph{z}-statistics for both exposure and outcome GWASs less than
+this value. The method then assumes that both of the true SNP-outcome and
+SNP-exposure effect sizes of each SNP in this subset are approximately 0.
+The default setting is \code{lambda.thresh=0.5}.}
 }
 \value{
 A list containing two elements, \code{summary} and \code{results}.

@@ -7,34 +7,9 @@
 #'  columns with column names \code{SNP}, \code{beta.exposure},
 #'  \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 #'  correspond to a unique SNP, identified by \code{SNP}.
-#'@param est.lambda A logical which allows the user to specify if they have used
-#'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
-#'  term used to describe the correlation between the outcome and exposure
-#'  effect sizes. This correlation is affected by the number of overlapping
-#'  samples between the two GWASs and the correlation between the exposure and
-#'  the outcome. Thus, it is recommended to use \code{est_lambda} if the
-#'  fraction of overlap and the correlation between exposure and outcome are
-#'  unknown. The default setting is \code{est.lambda=FALSE}.
-#'@param lambda.val A numerical value which should be specified by the user if
-#'  \code{est.lambda=TRUE}. It should be equal to the value returned from using
-#'  the function \code{est_lambda}. The default setting is \code{lambda.val=0}.
-#'@param n.exposure A numerical value to be specified by the user which is equal
-#'  to the number of individuals that were in the exposure GWAS. It should be
-#'  specified by the user if \code{est.lambda=FALSE}. The default setting is
-#'  \code{n.exposure=1}.
-#'@param n.outcome A numerical value to be specified by the user which is equal
-#'  to the number of individuals that were in the outcome GWAS. It should be
-#'  specified by the user if \code{est.lambda=FALSE}. The default setting is
-#'  \code{n.outcome=1}.
-#'@param n.overlap A numerical value to be specified by the user which is equal
-#'  to the number of individuals that were in both the exposure and outcome
-#'  GWAS. It should be specified by the user if \code{est.lambda=FALSE}. The
-#'  default setting is \code{n.overlap=1}.
-#'@param cor.xy A numerical value to be specified by the user which is equal to
-#'  the observed correlation between the exposure and the outcome. It should be specified by the user if
-#'  \code{est.lambda=FALSE}. The default setting is \code{cor.xy=0}. If this
-#'  value is unknown, the user is encouraged to use the function
-#'  \code{est_lambda}.
+#'@param lambda.val A numerical value which is computed within the main function, \code{mr_simss}.
+#' It is an estimate of \emph{lambda}, a term used to describe the correlation between the SNP-outcome and
+#'  SNP-exposure effect sizes. The default setting is \code{lambda.val=0}.
 #'@param pi A numerical value which determines the fraction of the first split. This is the fraction that will be used
 #'  for SNP selection. The default setting is \code{pi=0.5}.
 #'@param mr_method A string which specifies the MR method that MR-SimSS works in
@@ -54,18 +29,12 @@
 #'
 
 
-split2 <- function(data,est.lambda=FALSE,lambda.val=0,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,pi=0.5,mr_method="mr_ivw", threshold=5e-8){
-
-  if(est.lambda==TRUE){
-    lambda <- lambda.val
-  }else{
-    lambda <- (n.overlap*cor.xy)/(sqrt(n.exposure*n.outcome))
-  }
+split2 <- function(data,lambda.val=0,pi=0.5,mr_method="mr_ivw", threshold=5e-8){
 
   # create covariance matrix for the conditional distribution of each SNP
   cond_var_gx <- ((1-pi)/(pi))*(data$se.exposure)^2
   cond_var_gy <- ((1-pi)/(pi))*(data$se.outcome)^2
-  cond_cov_gx_gy <- ((1-pi)/(pi))*(data$se.exposure)*(data$se.outcome)*(lambda)
+  cond_cov_gx_gy <- ((1-pi)/(pi))*(data$se.exposure)*(data$se.outcome)*(lambda.val)
 
   cond_cov_array <- array(dim=c(2, 2, nrow(data)))
   cond_cov_array[1,1,] <- cond_var_gx
