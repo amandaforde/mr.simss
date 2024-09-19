@@ -20,6 +20,7 @@ articles:
       The following pages provide detailed instructions on how the functions in this package they may be used, together with theoretical derivations.
     contents:
       - wc_wib
+      - MR-SimSS-algorithm
       - perform-MR-SimSS
       - derive-MR-SimSS
 

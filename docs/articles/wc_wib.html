@@ -297,11 +297,59 @@ compromise between the two aforementioned extremes. Interestingly, <a href="http
 <em>et al.</em> (2016)</a> demonstrated that this <strong>bias is in
 fact linearly related to the fraction of sample overlap</strong> between
 the two data sets used to perform the exposure and outcome GWASs.</p>
+<p><br></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h3>
+<p>The various ways in which both <em>Winner’s Curse</em> and weak
+instrument bias can impact the MR causal effect estimate are summarized
+in the image below. The coloured circles, i.e. <span style="color: #1b9e77;"><strong>circle A</strong></span>, <span style="color: #d95f02;"><strong>circle B</strong></span> and <span style="color: #7570B3;"><strong>circle C</strong></span>, represent
+three sufficiently similar large independent samples in which
+association studies have been performed.</p>
+<ul>
+<li>
+<p>For instance, the first row describes a setting in which the
+association study performed on <span style="color: #1b9e77;"><strong>sample A</strong></span> is used to
+<strong>select the genetic instruments</strong> for the MR study and to
+<strong>estimate <u>both</u> variant-exposure and variant-outcome
+associations</strong>. Here, as the same study is used to select
+variants and obtain variant-exposure association estimates, these
+variant-exposure association estimates will suffer from <em>Winner’s
+Curse</em> bias. Similarly, as the same study is also used to select
+variants and obtain variant-outcome association estimates, the
+variant-outcome associations will also be overestimated due to
+<em>Winner’s Curse</em> bias. This means that as a result of
+<strong><em>Winner’s Curse</em></strong> <strong>in both sets of
+association estimates</strong>, the final MR causal effect estimate will
+be subject to both an <strong>inflation and deflation</strong>, of
+likely differing magnitudes. In addition, as the same study is used to
+estimate variant-exposure and variant-outcome associations, the
+<strong>weak instrument bias will act in the direction of the confounded
+observational exposure-outcome association</strong>.</p>
+</li>
+<li>
+<p>The final row depicts the <span style="color:darkblue;"><strong>‘three-sample’ design</strong></span>
+scenario, in which <span style="color: #1b9e77;"><strong>sample
+A</strong></span> is used to <strong>select the genetic
+instruments</strong> for the MR study, <span style="color:#d95f02;"><strong>sample B</strong></span> provides the
+<strong>variant-exposure association estimates</strong> and the
+<strong>variant-outcome associations</strong> are estimated using <span style="color: #7570B3;"><strong>sample C</strong></span>. As there is no
+sample overlap between the dataset used for selection purposes and the
+datasets used for estimation, neither the variant-exposure association
+estimates nor the variant-outcome association estimates suffer from
+<em>Winner’s Curse</em> bias. Furthermore, as the sample used to
+estimate the variant-exposure and the sample used to estimate the
+variant-outcome are non-overlapping/independent, the <strong>weak
+instrument bias will be towards the null</strong>.</p>
+</li>
+</ul>
+<p><br></p>
 <p align="center">
 <a href="https://github.com/amandaforde/winnerscurse_sims/blob/main/weak_instrument.jpg?raw=true" class="external-link">
-<img src="https://github.com/amandaforde/winnerscurse_sims/blob/main/weak_instrument.jpg?raw=true" width="85%"></a>
+<img src="https://github.com/amandaforde/winnerscurse_sims/blob/main/weak_instrument.jpg?raw=true" width="90%"></a>
 </p>
-</div>
 </div>
   </div>
 

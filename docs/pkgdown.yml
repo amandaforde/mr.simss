@@ -3,7 +3,8 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   derive-MR-SimSS: derive-MR-SimSS.html
+  MR-SimSS-algorithm: MR-SimSS-algorithm.html
   perform-MR-SimSS: perform-MR-SimSS.html
   wc_wib: wc_wib.html
-last_built: 2024-09-19T11:11Z
+last_built: 2024-09-19T14:01Z
 

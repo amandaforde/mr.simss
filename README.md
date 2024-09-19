@@ -12,8 +12,8 @@ This R package, `mr.simss`, has been designed to allow users to easily implement
 the Mendelian Randomization (MR) framework known as **MR Simulated Sample Splitting  (MR-SimSS)**. The MR-SimSS paradigm aims to <u>eliminate bias induced by *Winner's Curse*</u> in MR causal effect estimates, using only **summary statistics** from genome-wide association studies (GWASs). The approach is based on a <span style="color:darkblue;">**repeated simulated sample splitting**</span> procedure and works in combination with existing summary-level MR methods, such as IVW and MR-RAPS. In addition, the framework is designed to <u>assist in circumventing biases (e.g. weak instrument bias) arising due to sample overlap</u> between exposure and outcome GWASs, and thus, can be applied in both one-sample and two-sample cases. The <u>main function</u> in this package for executing MR-SimSS is
 `mr_simss`. `mr_simss` has several parameters which users can adjust based on
 their desired form of method implementation. Further discussion regarding these
-parameters can be viewed in the first vignette, ['Performing
-MR-SimSS'](https://amandaforde.github.io/mr.simss/articles/perform-MR-SimSS.html), while a detailed derivation of the MR-SimSS framework can be found in the second vignette, ['Performing
+parameters can be viewed in the vignette titled ['Performing
+MR-SimSS'](https://amandaforde.github.io/mr.simss/articles/perform-MR-SimSS.html). In addition, ... describes the MR-SimSS algorithm as well as the intuition for the approach, while a detailed derivation of the necessary formulae used in the construction of MR-SimSS can be found in ['Deriving
 MR-SimSS'](https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html).
 
 
@@ -28,7 +28,7 @@ library(mr.simss)
 
 <br>
 
-
+[$\star$]{style="color: darkblue;"} **Note:** A detailed description of how *Winner's Curse* and weak instrument bias can impact MR causal effect estimates can be found [here](https://amandaforde.github.io/mr.simss/articles/wc_wib.html).
 
 
 ### MR-SimSS Overview
