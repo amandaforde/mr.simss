@@ -23,11 +23,13 @@
 #'@param est.lambda A logical which allows the user to specify if they want to use
 #'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
 #'  term used to describe the correlation between the SNP-outcome and
-#'  SNP-exposure effect sizes. This correlation is affected by the number of
+#'  SNP-exposure effect sizes, with the data stored in \code{data}. This correlation is affected by the number of
 #'  overlapping samples between the two GWASs and the correlation between the
 #'  exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
 #'  if the fraction of overlap and the correlation between exposure and outcome
 #'  are unknown. The default setting is \code{est.lambda=TRUE}.
+#'@param lambda A numerical value which should be specified by the user if they have used the function \code{est_lambda} with different data than that inputted into this function in order to to obtain an estimate for \emph{lambda}.
+#' The default setting is \code{lambda=NULL}.
 #'@param n.exposure A numerical value to be specified by the user which is equal
 #'  to the number of individuals that were in the exposure GWAS. It should be
 #'  specified by the user if \code{est.lambda=FALSE}. The default setting is
@@ -103,7 +105,7 @@
 #'@export
 #'
 
-mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
+mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,lambda = NULL,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,
                      n.iter=1000,splits=2,pi=0.5,pi2=0.5,threshold=5e-8,mr_method="mr_ivw",
                      parallel=TRUE,n.cores=NULL,lambda.thresh=0.5){
 
@@ -116,12 +118,17 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1
   stopifnot(n.overlap <= min(n.outcome,n.exposure))
   stopifnot(threshold >= 0 && threshold <= 1)
 
-  ## work out lambda here
-  if(est.lambda==TRUE){
-    lambda <- mr.simss::est_lambda(data,z.threshold=lambda.thresh)
+  ## work out lambda here - neater ways to write this?
+  if(is.null(lambda) == TRUE){
+    if(est.lambda==TRUE){
+      lambda.val <- mr.simss::est_lambda(data,z.threshold=lambda.thresh)
+    }else{
+      lambda.val <- (n.overlap*cor.xy)/(sqrt(n.exposure*n.outcome))
+    }
   }else{
-    lambda <- (n.overlap*cor.xy)/(sqrt(n.exposure*n.outcome))
+    lambda.val <- lambda
   }
+
 
   if(subset == TRUE){
     thresh1 <- stats::qnorm((threshold)/2, lower.tail=FALSE)
@@ -138,9 +145,9 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1
     doParallel::registerDoParallel(cl = my.cluster)
 
     if(splits==2){
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,lambda.val=lambda,pi,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split2(data,lambda.val=lambda.val,pi,mr_method,threshold)}
     }else{
-      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,lambda.val=lambda,pi,pi2,mr_method,threshold)}
+      results <- foreach::foreach(i = 1:n.iter,.packages=c('tidyverse','mr.simss'),.combine = 'rbind') %dopar% {mr.simss::split3(data,lambda.val=lambda.val,pi,pi2,mr_method,threshold)}
     }
     parallel::stopCluster(cl = my.cluster)
 
@@ -148,12 +155,12 @@ mr_simss <- function(data,subset=FALSE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1
     results <- c()
     if(splits==2){
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split2(data,lambda.val=lambda,pi,mr_method,threshold)
+        wc_remove <- mr.simss::split2(data,lambda.val=lambda.val,pi,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }else{
       for (i in 1:n.iter){
-        wc_remove <- mr.simss::split3(data,lambda.val=lambda,pi,pi2,mr_method,threshold)
+        wc_remove <- mr.simss::split3(data,lambda.val=lambda.val,pi,pi2,mr_method,threshold)
         if(is.null(wc_remove) == FALSE){results <- rbind(results,wc_remove)}
       }
     }

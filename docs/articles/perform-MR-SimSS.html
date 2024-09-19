@@ -95,6 +95,23 @@ detailed discussion of how to do that and the various options included
 <div class="section level3">
 <h3 id="using-est_lambda">Using <code>est_lambda</code><a class="anchor" aria-label="anchor" href="#using-est_lambda"></a>
 </h3>
+<p>As well as estimates of the variant-exposure and variant-outcome
+associations and corresponding standard errors, the method also requires
+<em>(a)</em> knowledge of the number of samples in both outcome and
+exposure GWASs, the number of overlapping samples between the two GWASs,
+and the correlation between the exposure and the outcome, or
+<em>(b)</em> an estimate of the correlation between the SNP-outcome and
+SNP-exposure effect sizes. Due to this, this R package also contains a
+<strong><em>supplementary function</em></strong>,
+<code>est_lambda</code>, which allows users to obtain an
+<em>unbiased</em> estimate for <em>lambda</em>, the correlation between
+the variant-outcome and variant-exposure effect sizes, using a
+conditional log-likelihood approach. It is recommended to use this
+function when the fraction of overlap and the correlation between
+exposure and outcome are unknown. Merely the GWAS <strong>summary
+statistics</strong> of a large set of <em>unpruned</em> variants or
+single nucleotide polymorphisms (SNPs) are required in order to obtain
+an estimate for <em>lambda</em>.</p>
 <p>Important to have a section on Runtime here…</p>
 </div>
 <div class="section level3">

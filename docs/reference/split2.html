@@ -50,18 +50,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">split2</span><span class="op">(</span></span>
-<span>  <span class="va">data</span>,</span>
-<span>  est.lambda <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lambda.val <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  n.exposure <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  n.outcome <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  n.overlap <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cor.xy <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  pi <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  mr_method <span class="op">=</span> <span class="st">"mr_ivw"</span>,</span>
-<span>  threshold <span class="op">=</span> <span class="fl">5e-08</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">split2</span><span class="op">(</span><span class="va">data</span>, lambda.val <span class="op">=</span> <span class="fl">0</span>, pi <span class="op">=</span> <span class="fl">0.5</span>, mr_method <span class="op">=</span> <span class="st">"mr_ivw"</span>, threshold <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,50 +63,10 @@ columns with column names <code>SNP</code>, <code>beta.exposure</code>,
 correspond to a unique SNP, identified by <code>SNP</code>.</p></dd>
 
 
-<dt>est.lambda</dt>
-<dd><p>A logical which allows the user to specify if they have used
-the function, <code>est_lambda</code>, to obtain an estimate for <em>lambda</em>, a
-term used to describe the correlation between the outcome and exposure
-effect sizes. This correlation is affected by the number of overlapping
-samples between the two GWASs and the correlation between the exposure and
-the outcome. Thus, it is recommended to use <code>est_lambda</code> if the
-fraction of overlap and the correlation between exposure and outcome are
-unknown. The default setting is <code>est.lambda=FALSE</code>.</p></dd>
-
-
 <dt>lambda.val</dt>
-<dd><p>A numerical value which should be specified by the user if
-<code>est.lambda=TRUE</code>. It should be equal to the value returned from using
-the function <code>est_lambda</code>. The default setting is <code>lambda.val=0</code>.</p></dd>
-
-
-<dt>n.exposure</dt>
-<dd><p>A numerical value to be specified by the user which is equal
-to the number of individuals that were in the exposure GWAS. It should be
-specified by the user if <code>est.lambda=FALSE</code>. The default setting is
-<code>n.exposure=1</code>.</p></dd>
-
-
-<dt>n.outcome</dt>
-<dd><p>A numerical value to be specified by the user which is equal
-to the number of individuals that were in the outcome GWAS. It should be
-specified by the user if <code>est.lambda=FALSE</code>. The default setting is
-<code>n.outcome=1</code>.</p></dd>
-
-
-<dt>n.overlap</dt>
-<dd><p>A numerical value to be specified by the user which is equal
-to the number of individuals that were in both the exposure and outcome
-GWAS. It should be specified by the user if <code>est.lambda=FALSE</code>. The
-default setting is <code>n.overlap=1</code>.</p></dd>
-
-
-<dt>cor.xy</dt>
-<dd><p>A numerical value to be specified by the user which is equal to
-the observed correlation between the exposure and the outcome. It should be specified by the user if
-<code>est.lambda=FALSE</code>. The default setting is <code>cor.xy=0</code>. If this
-value is unknown, the user is encouraged to use the function
-<code>est_lambda</code>.</p></dd>
+<dd><p>A numerical value which is computed within the main function, <code>mr_simss</code>.
+It is an estimate of <em>lambda</em>, a term used to describe the correlation between the SNP-outcome and
+SNP-exposure effect sizes. The default setting is <code>lambda.val=0</code>.</p></dd>
 
 
 <dt>pi</dt>

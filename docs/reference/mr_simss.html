@@ -64,8 +64,7 @@ IVW and MR-RAPS.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  subset <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sub.cut <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  est.lambda <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lambda.val <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  est.lambda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n.exposure <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n.outcome <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n.overlap <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -77,7 +76,8 @@ IVW and MR-RAPS.</p>
 <span>  threshold <span class="op">=</span> <span class="fl">5e-08</span>,</span>
 <span>  mr_method <span class="op">=</span> <span class="st">"mr_ivw"</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  n.cores <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  n.cores <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lambda.thresh <span class="op">=</span> <span class="fl">0.5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -106,20 +106,14 @@ merely the subset is used will be equal with probability at least
 
 
 <dt>est.lambda</dt>
-<dd><p>A logical which allows the user to specify if they have used
+<dd><p>A logical which allows the user to specify if they want to use
 the function, <code>est_lambda</code>, to obtain an estimate for <em>lambda</em>, a
 term used to describe the correlation between the SNP-outcome and
 SNP-exposure effect sizes. This correlation is affected by the number of
 overlapping samples between the two GWASs and the correlation between the
 exposure and the outcome. Thus, it is recommended to use <code>est_lambda</code>
 if the fraction of overlap and the correlation between exposure and outcome
-are unknown. The default setting is <code>est.lambda=FALSE</code>.</p></dd>
-
-
-<dt>lambda.val</dt>
-<dd><p>A numerical value which should be specified by the user if
-<code>est.lambda=TRUE</code>. It should be equal to the value returned from using
-the function <code>est_lambda</code>. The default setting is <code>lambda.val=0</code>.</p></dd>
+are unknown. The default setting is <code>est.lambda=TRUE</code>.</p></dd>
 
 
 <dt>n.exposure</dt>
@@ -207,6 +201,14 @@ to use this function in parallel or in series. The default setting is
 if <code>parallel=TRUE</code>. This value should be supplied by the user if they
 wish to use less cores than the output of <code>parallel::detectCores()-1</code>.
 The default setting is <code>n.cores=NULL</code>.</p></dd>
+
+
+<dt>lambda.thresh</dt>
+<dd><p>A value which is used when estimating <em>lambda</em> to
+obtain a subset of SNPs which have absolute <em>z</em>-statistics for both exposure and outcome GWASs less than
+this value. The method then assumes that both of the true SNP-outcome and
+SNP-exposure effect sizes of each SNP in this subset are approximately 0.
+The default setting is <code>lambda.thresh=0.5</code>.</p></dd>
 
 </dl></div>
     <div id="value">

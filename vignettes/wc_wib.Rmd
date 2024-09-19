@@ -1,0 +1,112 @@
+---
+title: "Winner's Curse and weak instrument bias in MR"
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Winner's Curse and weak instrument bias in MR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+### *Winner's Curse* in MR
+
+
+#### <span style="color:darkblue;">What is *Winner's Curse* bias?</span>
+
+As stated in [Forde *et al.*
+(2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546), it has been observed that in general, the effect size of a genetic variant tends to be lower in a replication study than in the GWAS that discovered the variant-trait association. This observation is due to the phenomenon known as *Winner’s Curse*. In the context of a single association study, the term *Winner’s Curse* describes how the **estimates of association strength for genetic variants that have been deemed most significant are very likely to be exaggerated** compared with their true underlying values. A more detailed description of the *Winner's Curse* phenomenon, especially with respect to genetic association studies, can be found [here](https://amandaforde.github.io/winnerscurse/).
+
+*Winner’s Curse* bias can have many practical consequences, most notably affecting techniques which are reliant on variant-trait association estimates obtained from GWASs. Thus, as Mendelian Randomization (MR) is a statistical framework which uses genetic variants as instrumental variables (IVs) to estimate the magnitude of the causal effect of an exposure on an outcome, ***Winner’s Curse*** **bias can prove problematic in the MR setting.**
+
+<br>
+
+#### <span style="color:darkblue;">How and why does *Winner's Curse* bias affect MR causal effect estimates?</span>
+
+
+In order to correctly determine the causal effect of an exposure on an outcome, an MR study requires certain essential IV conditions to be met. The first IV condition, namely instrument relevance, states that the **genetic variants used as instruments must be robustly associated with the modifiable exposure** ([Von Hinke *et al.* (2016)](https://www.sciencedirect.com/science/article/pii/S0167629615001198)). Thus, in order to ensure that this condition is satisfied, MR practitioners typically choose genetic variants for use in the study if statistical evidence suggests that the variants are strongly associated with the exposure. In a summary-level MR framework, it is therefore most common practice to **select genetic instruments according to their exposure GWAS summary data and an imposed selection criterion**, i.e. typically genetic variants with $p$-values less than $5 \times 10^{-8}$ in the exposure GWAS. 
+
+*Winner’s Curse* arises in an MR investigation when there exists **sample overlap between the GWAS used to select instruments and the GWASs used to estimate the instrument-exposure and instrument-outcome associations** ([Jiang *et al.*
+(2022)](https://academic.oup.com/ije/article/52/4/1209/6961569?login=false)),  i.e. a certain portion of individuals are used for both selection and estimation purposes. 
+
+
+<ol>
+  <li>Firstly, if the **discovery study**, the GWAS used to choose suitable genetic instruments, also **supplies the variant-exposure association estimates** used in the MR analysis, then due to *Winner’s Curse*, overestimation of the effect of the genetic instruments relative to the exposure is likely to occur. A <u><span style="color:darkblue;">**deflation**</span> **in the overall MR causal effect estimate**</u> is subsequently incurred. Many common MR methods combine the Wald ratio estimates of multiple variants to provide an overall causal effect estimate. Therefore, if *Winner’s Curse* bias exists in the denominators of the Wald ratio estimates, i.e. the estimated genetic associations with the exposure, each variant-specific ratio estimate will be subject to downward bias in the direction of the null, and so too will the final MR estimate.</li>
+  
+  <li>Even though the severity of *Winner’s Curse* bias will generally be
+greatest with respect to the associations with the trait used for variant selection purposes, i.e. the exposure, associations with another trait, correlated with the exposure, can also be affected. As the exposure and the outcome tend to be associated due to confounding, this means that if the **same set of individuals are used in the discovery study as in the GWAS used to obtain the variant-outcome association estimates**, these estimates will also likely be exaggerated. In this instance, in which the variant-outcome association estimates used in the MR analysis are biased due to *Winner’s Curse*, the resulting <u>**MR estimate will likely be** <span style="color:darkblue;">**inflated**</span></u>. </li>
+</ol>
+
+<br>
+
+#### <span style="color:darkblue;">Empirical evidence for the impact of *Winner's Curse* on MR estimates</span>
+
+Motivated by the fact that the effect of *Winner’s Curse*, with respect to MR studies, remained unclear, [Jiang *et al.*
+(2022)](https://academic.oup.com/ije/article/52/4/1209/6961569?login=false) performed an empirical investigation into the impact of *Winner’s Curse* on MR estimates, by considering the **effect of BMI on coronary artery disease risk**. In their work, [Jiang *et al.*
+(2022)](https://academic.oup.com/ije/article/52/4/1209/6961569?login=false) noted that in practice, *Winner’s Curse* is most consequential for MR when it impacts genetic association estimates with the outcome. In this case, the resulting inflation in the causal effect estimate can potentially lead to a false positive finding. However, the magnitude of bias induced by *Winner’s Curse* in estimated variant-outcome associations was witnessed to be much lower than that in the variant-exposure associations. Despite this, the **potential of** ***Winner’s Curse*** **to substantially bias MR estimates was clearly demonstrated**. In fact, it has also been shown separately that *Winner’s Curse* can greatly **magnify the extent of weak instrument bias** in MR analyses ([Sadreev *et al.*
+(2021)](https://www.medrxiv.org/content/10.1101/2021.06.28.21259622v1.full)).
+
+
+<br>
+
+#### <span style="color:darkblue;">How is *Winner's Curse* bias typically avoided in summary-level MR studies?</span>
+
+Several methods have been published which aim to correct variant-trait association estimates for *Winner’s Curse* bias, as described in [Forde *et al.*
+(2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).  Unfortunately, in practice, incorporation of such approaches into MR investigations has been rarely seen in the literature. In fact, the most common recognised solution to *Winner’s Curse* in summary-level MR analyses is simply the employment of a <span style="color:darkblue;">**‘three-sample’ design**</span>, in which **three independent non-overlapping data sets are used to select instrument variants, estimate variant-exposure associations and estimate variant-outcome associations** ([Jiang *et al.*
+(2022)](https://academic.oup.com/ije/article/52/4/1209/6961569?login=false)). For instance, [Zhao *et al.* (2020)](https://projecteuclid.org/journals/annals-of-statistics/volume-48/issue-3/Statistical-inference-in-two-sample-summary-data-Mendelian-randomization-using/10.1214/19-AOS1866.full) suggest that *Winner’s Curse* bias should be dealt with ‘by requiring use of an independent dataset for IV selection’. However, it can be **difficult to obtain three large non-overlapping GWAS data sets, that are sufficiently similar** with respect to participant characteristics. In addition, potentially **splitting a large exposure data set** in two may be undesirable as it **reduces the power** to both detect suitable instruments and estimate their associations with the exposure.
+
+
+<br>
+
+
+### Weak Instrument Bias in MR
+
+#### <span style="color:darkblue;">What is weak instrument bias?</span>
+
+
+  
+
+A <u>**weak instrument**</u> is a valid IV that perfectly satisfies the core IV conditions, but only **explains a small fraction of variation in the exposure** and thus, the strength of the statistical association between this instrument and the exposure is seen as ‘weak’ ([Burgess and Thompson (2011)](https://onlinelibrary.wiley.com/doi/full/10.1002/sim.4197)). For such an instrument, it is likely that **chance associations of the instrument with confounding factors are responsible for a sizeable proportion of the observed instrument-exposure association**. If genetic variants that are weakly associated with the exposure are used as instruments in an MR analysis, this will result in a non-trivial form of bias, namely <u>**weak instrument bias**</u>, being introduced into the causal effect estimation. 
+
+<br>
+
+#### <span style="color:darkblue;">How does weak instrument bias impact MR causal effect estimates?</span>
+
+
+The bias induced into the MR causal effect estimate, arising from the use of weak instruments, **varies in magnitude and direction according to the extent of overlap** between the exposure and outcome sample sets ([Burgess *et al.* (2016)](https://onlinelibrary.wiley.com/doi/full/10.1002/sim.6835)). 
+
+
+<ol>
+  <li>In a **one-sample** MR setting, in which a single **fully overlapping sample** is used to estimate the genetic associations with the exposure and the outcome, these chance correlations with confounders have a related impact on association
+estimation with respect to both the exposure and outcome. The incorporation of weak
+instruments thus <u>**biases the causal effect estimate** <span style="color:darkblue;">**towards the confounded observational exposure-outcome association**</span></u> ([Burgess and Thompson (2011)](https://onlinelibrary.wiley.com/doi/full/10.1002/sim.4197)), likely increasing the risk of Type I error ([Stock and Yogo (2002)](https://www.nber.org/papers/t0284)).</li>
+  
+  <li>On the contrary, for a **two-sample** MR analysis, in which variant-exposure and variant-outcome associations are estimated using **two non-overlapping samples**, the chance confounder correlations influence these associations independently. Weak instrument <u>**bias will then be witnessed to act in the** <span style="color:darkblue;">**direction of the null**</span></u> ([Pierce and Burgess (2013)](https://academic.oup.com/aje/article/178/7/1177/211774)). </li>
+</ol>
+
+
+
+As the former of these two versions of bias can greatly increase the risk of Type I error, **many investigators favour two-sample MR analyses** to circumvent incurring such an error. In addition, the **majority of MR summary-level methods have been designed according to an assumption that the variant-exposure and variant-outcome association estimates have been produced by independent GWASs**. However, as highlighted by [Burgess *et al.* (2016)](https://onlinelibrary.wiley.com/doi/full/10.1002/gepi.21998), with
+respect to a population of interest, the largest outcome and exposure GWAS have
+generally been carried out by a large GWAS consortium and thus, there may be a
+substantial number of individuals common to both GWAS data sets. Given this, taking a two-sample approach and restricting analyses to GWASs with zero overlap often leads to inefficient resource usage and reduced statistical power. 
+
+
+[$\star$]{style="color: darkblue;"} **Note:** In a summary-level MR study in which the samples are only partially overlapping, the weak instrument bias introduced will be some form of compromise between the two aforementioned extremes. Interestingly, [Burgess *et al.* (2016)](https://onlinelibrary.wiley.com/doi/full/10.1002/gepi.21998) demonstrated that this **bias is in fact linearly related to the fraction of sample overlap** between the two data sets used to perform the exposure and outcome GWASs. 
+
+
+<br>
+
+### Summary 
+
+<p align="center">
+<a href="https://github.com/amandaforde/winnerscurse_sims/blob/main/weak_instrument.jpg?raw=true"> 
+<img src="https://github.com/amandaforde/winnerscurse_sims/blob/main/weak_instrument.jpg?raw=true" width="90%"> </a>
+</p>
