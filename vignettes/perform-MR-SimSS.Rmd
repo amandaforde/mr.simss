@@ -31,7 +31,7 @@ First create a toy data set...
 
 ### Creating a toy data set
 
-Establish function to create toy data set.. specify certain parameters etc.... 
+Establish function to create toy data set.. specify certain parameters etc....??  
 
 ### Using `mr_simss`
 

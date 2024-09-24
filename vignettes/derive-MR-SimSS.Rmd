@@ -21,3 +21,10 @@ library(mr.simss)
 
 
 Deriving the method ... this will include a lot of details that are already included in the html file online ... 
+
+
+
+### Estimating the correlation
+
+
+### Reducing the set of variants
