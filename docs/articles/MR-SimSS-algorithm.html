@@ -226,154 +226,222 @@ statistics.</strong></p>
 <div class="section level3">
 <h3 id="how-does-mr-simss-work">How does MR-SimSS work?<a class="anchor" aria-label="anchor" href="#how-does-mr-simss-work"></a>
 </h3>
-<p>Firstly, MR-SimSS works with summary-level data. Thus, it assumes
-that an exposure and outcome GWAS have been performed, providing
+<p>As MR-SimSS works with <strong>summary-level data</strong>, it
+assumes that an exposure and outcome GWAS have been performed, providing
 variant-exposure and variant-outcome association estimates, <span class="math inline">\(\{\widehat{\gamma_{j}},
-\widehat{\Gamma_j}\}\)</span>, in which there may be a number of
-overlapping individuals between the two GWASs, <span class="math inline">\(N_\text{overlap}\)</span>. As MR-SimSS has been
-constructed with the intention to imitate the above repeated sample
-splitting, it first considers splitting the dataset into two fractions,
-<span class="math inline">\(\pi\)</span> and <span class="math inline">\(1-\pi\)</span>, and simulates values for the
-association estimates in the first fraction, <span class="math inline">\(\{\widehat{\gamma_{{\pi}_j}},
+\widehat{\Gamma_j}\}\)</span>, in which there <u>may be a number of
+overlapping individuals between the two GWASs</u>, <span class="math inline">\(N_\text{overlap}\)</span>.</p>
+<ol>
+<li>
+<p>Constructed with the intention to imitate the above repeated sample
+splitting, <strong>MR-SimSS first considers splitting the dataset into
+two fractions</strong>, <span class="math inline">\(\pi\)</span> and
+<span class="math inline">\(1-\pi\)</span>. <u>Values are simulated for
+the association estimates in the first fraction</u>, <span class="math inline">\(\{\widehat{\gamma_{{\pi}_j}},
 \widehat{\Gamma_{{\pi}_j}}\}\)</span>, conditional on those in the full
 dataset, <span class="math inline">\(\{\widehat{\gamma_{j}},
-\widehat{\Gamma_j}\}\)</span>. Thus, the first step of MR-SimSS involves
-simulating values for <span class="math inline">\(\{\widehat{\gamma_{{\pi}_j}},
-\widehat{\Gamma_{{\pi}_j}}\}\)</span>, using the asymptotic conditional
-distribution of …. For genetic variant <span class="math inline">\(j\)</span>, the following formula for the
-asymptotic conditional distribution has been derived:</p>
-<p>Here, <span class="math inline">\(\rho\)</span> represents the
+\widehat{\Gamma_j}\}\)</span>, i.e. values are simulated for <span class="math inline">\(\{\widehat{\gamma_{{\pi}_j}},
+\widehat{\Gamma_{{\pi}_j}}\}\)</span>, using the <span style="color:darkblue;"><strong>asymptotic conditional
+distribution</strong></span> of <span class="math inline">\(\begin{bmatrix} \widehat{\gamma_{\pi}} \\
+\widehat{\Gamma_{\pi}} \end{bmatrix} \Bigm| \begin{bmatrix}
+\widehat{\gamma} \\ \widehat{\Gamma} \end{bmatrix}\)</span>. For genetic
+variant <span class="math inline">\(j\)</span>, the asymptotic
+conditional distribution has been derived as:</p>
+<p><span class="math display">\[
+\left( \begin{bmatrix} \widehat{\gamma_{\pi}} \\ \widehat{\Gamma_{\pi}}
+\end{bmatrix} \Bigm| \begin{bmatrix} \widehat{\gamma} \\
+\widehat{\Gamma} \end{bmatrix} \right) \sim N \left( \begin{bmatrix}
+\widehat{\gamma} \\ \widehat{\Gamma} \end{bmatrix}, \left(
+\frac{1-\pi}{\pi} \begin{bmatrix} \sigma^2_X &amp; \sigma_X \sigma_Y
+\frac{N_\text{overlap} \rho}{N_X N_Y}\\ \sigma_X \sigma_Y
+\frac{N_\text{overlap} \rho}{N_X N_Y} &amp; \sigma^2_Y\end{bmatrix}
+\right)\right)
+\]</span></p>
+Here, <span class="math inline">\(\rho\)</span> represents the
 correlation between the exposure and the outcome, <span class="math inline">\(\rho = \text{cor}(X,Y)\)</span>, which may differ
 from <span class="math inline">\(\beta\)</span>, the true
-exposure-outcome causal effect, due to confounding. See the vignette <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html" class="external-link">‘Deriving
-MR-SimSS’</a> for a detailed outline of the derivation of this
-asymptotic distribution.</p>
-<p>The corresponding estimated standard errors in the first fraction,
-<span class="math inline">\(\{
+exposure-outcome causal effect, due to confounding. A detailed outline
+of the derivation of this asymptotic distribution can be found <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html" class="external-link">here</a>.
+</li>
+<li>
+The <strong>estimated standard errors</strong> of the simulated
+association estimates in the first fraction, <span class="math inline">\(\{
 \widehat{\sigma_{X_{\pi,j}}},\widehat{\sigma_{Y_{\pi,j}}}\}\)</span> can
 be obtained by approximating then with <span class="math inline">\(\sigma_{X_{\pi,j}} \sim \sqrt{\frac{1}{\pi}} \cdot
 \widehat{\sigma_{X_{j}}}\)</span> and <span class="math inline">\(\sigma_{Y_{\pi,j}} \sim \sqrt{\frac{1}{\pi}} \cdot
-\widehat{\sigma_{Y_{j}}}\)</span>, respectively.</p>
-<p>The genetic instruments are then selected according to their
-z-statistics, <span class="math inline">\(z_{X_{\pi,j}} =
-\frac{\widehat{\gamma_{\pi_j}}}{\widehat{\sigma_{X_{\pi,j}}}}, j=1,
-\dots, n\)</span> in this fraction, i.e. genetic variants are chosen to
-be incorporated into the MR analysis which have corresponding p-values
-less than the genome-wide significance threshold of <span class="math inline">\(5 \times 10^{-8}\)</span>. For each genetic
-variant, the association estimates that would have been obtained if
-GWASs were conducted in the second fraction, <span class="math inline">\(1−\pi\)</span>, can be generated using <span class="math inline">\(\widehat{\gamma_j} \approx
+\widehat{\sigma_{Y_{j}}}\)</span>, respectively.
+</li>
+<li>
+The <strong>genetic instruments are selected</strong> according to their
+<span class="math inline">\(z\)</span>-statistics, <span class="math inline">\(z_{X_{\pi,j}} =
+\frac{\widehat{\gamma_{\pi_j}}}{\widehat{\sigma_{X_{\pi,j}}}}\)</span>
+in fraction <span class="math inline">\(\pi\)</span>, i.e. genetic
+variants are chosen to be incorporated into the MR analysis which have
+corresponding <span class="math inline">\(p\)</span>-values less than
+the genome-wide significance threshold of <span class="math inline">\(5
+\times 10^{-8}\)</span>.
+</li>
+<li>
+For each genetic variant, the <u>association estimates that would have
+been obtained if GWASs were conducted in the second fraction</u>, <span class="math inline">\(1−\pi\)</span>, can be generated using <span class="math inline">\(\widehat{\gamma_j} \approx
 \pi\widehat{\gamma_{\pi_j}} +
 (1-\pi)\widehat{\gamma_{{(1-\pi)}_j}}\)</span> and <span class="math inline">\(\widehat{\Gamma_j} \approx
 \pi\widehat{\Gamma_{\pi_j}} +
 (1-\pi)\widehat{\Gamma_{{(1-\pi)}_j}}\)</span>. Note that these
-relationships hold due to the asymptotic linearity of maximum likelihood
-estimates but therefore, are only approximate to order 1/N. The
-estimated variant-exposure and variant-outcome associations and
-corresponding standard errors in the <span class="math inline">\(1-\pi\)</span> fraction are obtained as:</p>
-<p>We first considered a 2-split approach in which the estimated
-associations and standard errors from the above equation were then
-inputted into a summary-level MR method of choice, such as the IVW
-method.</p>
+relationships hold due to the <strong>asymptotic linearity of maximum
+likelihood estimates</strong> but therefore, are only approximate to
+order <span class="math inline">\(\frac{1}{N}\)</span>. The
+corresponding standard errors in the <span class="math inline">\(1-\pi\)</span> fraction are similarly approximated
+by <span class="math inline">\(\widehat{\sigma_{X_{1-\pi_j}}} \sim
+\sqrt{\frac{1}{1-\pi}} \cdot \widehat{\sigma_{X_{j}}}\)</span> and <span class="math inline">\(\widehat{\sigma_{Y_{1-\pi_j}}} \sim
+\sqrt{\frac{1}{1-\pi}} \cdot \widehat{\sigma_{Y_{j}}}\)</span>.
+</li>
+<li>
+<p>Applying a <strong>summary-level MR method</strong> of choice, such
+as the IVW method, using the summary statistics <span class="math inline">\(\{\widehat{\gamma_{{1-\pi}_j}},
+\widehat{\sigma_{X_{1-\pi_j}}}, \widehat{\Gamma_{{1-\pi}_j}},
+\widehat{\sigma_{Y_{1-\pi_j}}} \}\)</span> of selected genetic variants,
+i.e. those that satisfy the condition <span class="math inline">\(\left|
+z_{X_{\pi_j}} \right| &gt; \Phi^{-1}\left(1- \frac{5 \times
+10^{-8}}{2}\right)\)</span>, describes the <span style="color:darkblue;"><strong>2-split version of
+MR-SimSS</strong></span>. Steps 1-5 are illustrated in the figure
+below.</p>
+</li>
+</ol>
 <p><br></p>
 <p align="center">
 <a href="https://github.com/amandaforde/winnerscurse_sims/blob/main/summary_1.jpg?raw=true" class="external-link">
 <img src="https://github.com/amandaforde/winnerscurse_sims/blob/main/summary_1.jpg?raw=true" width="100%"></a>
 </p>
 <p><br></p>
-<p>However, we recognised that this could induce a notable amount of
-weak instrument bias in the direction of the confounded observational
-association between the exposure and the outcome if there existed a
-large degree of overlap between the sample sets used in the exposure and
-outcome GWASs. Therefore, we also propose a 3-split approach which in
-addition to eliminating Winner’s Curse bias, can only result in weak
-instrument bias towards the null, irrespective of the proportion of
-sample overlap. With the 3-split approach, we imagine as if we go on to
-split the individual-level data in the <span class="math inline">\(1-\pi\)</span> fraction into two fractions, <span class="math inline">\(p\)</span> and <span class="math inline">\(1−
-p\)</span>, and perform an exposure GWAS in the <span class="math inline">\(p\)</span> fraction and an outcome GWAS in the
-<span class="math inline">\(1− p\)</span> fraction.</p>
-<p>Our method imitates this idea by simulating values for the estimated
-variant-exposure and variant-outcome associations, <span class="math inline">\(\{\widehat{\gamma_{{(1-\pi)p}_j}},
+<p><u>However</u>, as mentioned above, if there exists a large degree of
+overlap between the sample sets used in the exposure and outcome GWASs,
+then using association estimates derived from the same fraction is
+likely to induce a notable amount of <strong>weak instrument
+bias</strong> in the MR estimate <strong>in the direction of the
+confounded observational exposure-outcome association</strong>.</p>
+<p>Therefore, a <span style="color:darkblue;"><strong>3-split version of
+MR-SimSS</strong></span> was proposed that would eliminate <em>Winner’s
+Curse</em> bias, and <u>only result in weak instrument bias towards the
+null, irrespective of the proportion of sample overlap</u>.</p>
+<ol start="5">
+<li>
+After carrying out steps 1-4 above, the 3-split version of MR-SimSS
+imitates the <strong>splitting of individual-level data in the <span class="math inline">\(1-\pi\)</span> fraction</strong> into two
+fractions, <span class="math inline">\(p\)</span> and <span class="math inline">\(1− p\)</span>. Values are simulated for the
+estimated variant-exposure and variant-outcome associations, <span class="math inline">\(\{\widehat{\gamma_{{(1-\pi)p}_j}},
 \widehat{\Gamma_{{(1-\pi)p}_j}}\}\)</span>, respectively, conditional on
 the generated association estimates in the <span class="math inline">\(1-\pi\)</span> fraction, <span class="math inline">\(\{\widehat{\gamma_{{(1-\pi)}_j}},
-\widehat{\Gamma_{{(1-\pi)}_j}}\}\)</span>. The asymptotic conditional
-distribution of …. takes a similar format to and an expression for it
-can be found in the vignette <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html" class="external-link">‘Deriving
-MR-SimSS’</a>.</p>
-<p>Using the asymptotic linearity of maximum likelihood estimates, <span class="math inline">\(\widehat{\Gamma_{{(1-\pi)(1-p)}_j}}\)</span> is
-obtained using <span class="math inline">\(\widehat{\Gamma_{{(1-\pi)(1-p)}_j}} \approx
-\frac{\widehat{\Gamma_{{(1-\pi)}_j}}-p\widehat{\Gamma_{{(1-\pi)p}_j}}}{1-p}\)</span>.
-In addition, the estimated standard errors, <span class="math inline">\(\widehat{\sigma_{X_{(1-\pi)p,j}}}\)</span> and
-<span class="math inline">\(\widehat{\sigma_{X_{(1-\pi)(1-p),j}}}\)</span> can
-be approximated by …, respectively.</p>
-<p>Therefore, the values for each variant <span class="math inline">\(j=1, \dots, n_{\text{sig}}\)</span> in which all
-genetic variants <span class="math inline">\(j=1, \dots,
-n_{\text{sig}}\)</span> have been selected in the first <span class="math inline">\(\pi\)</span> fraction, i.e. satisfy the
-condition…, are inputted into the MR method of choice.</p>
+\widehat{\Gamma_{{(1-\pi)}_j}}\}\)</span>. The <strong>asymptotic
+conditional distribution</strong> of <span class="math inline">\(\begin{bmatrix} \widehat{\gamma_{(1-\pi)p}} \\
+\widehat{\Gamma_{(1-\pi)p}} \end{bmatrix} \Bigm| \begin{bmatrix}
+\widehat{\gamma_{1-\pi}} \\ \widehat{\Gamma_{1-\pi}}
+\end{bmatrix}\)</span> takes a similar format to the conditional
+distribution included above - an expression for it can be found <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html" class="external-link">here</a>.
+</li>
+<li>
+Using the <strong>asymptotic linearity of maximum likelihood
+estimates</strong>, <span class="math inline">\(\widehat{\Gamma_{{(1-\pi)(1-p)}_j}}\)</span> is
+obtained using <span class="math inline">\(\widehat{\Gamma_{{(1-\pi)}_j}} \approx
+p\widehat{\Gamma_{{(1-\pi)p}_j}}-(1-p)\widehat{\Gamma_{{(1-\pi)(1-p)}_j}}\)</span>,
+with the estimated standard errors <span class="math inline">\(\widehat{\sigma_{X_{(1-\pi)p_j}}}\)</span> and
+<span class="math inline">\(\widehat{\sigma_{X_{(1-\pi)(1-p)_j}}}\)</span>
+again approximated in a similar manner to previously.
+</li>
+<li>
+A <strong>summary-level MR method</strong> of choice, such as the IVW or
+MR-RAPS methods is applied to the summary statistics <span class="math inline">\(\{\widehat{\gamma_{{(1-\pi)}p_j}},
+\widehat{\sigma_{X_{(1-\pi)p_j}}}, \widehat{\Gamma_{{(1-\pi)(1-p)}_j}},
+\widehat{\sigma_{Y_{(1-\pi)(1-p)_j}}} \}\)</span> of genetic variants
+<span class="math inline">\(j=1, \dots, n_{\text{sig}}\)</span> that
+have been selected in the first <span class="math inline">\(\pi\)</span>
+fraction, i.e. those that satisfy the condition <span class="math inline">\(\left| z_{X_{\pi_j}} \right| &gt;
+\Phi^{-1}\left(1- \frac{5 \times 10^{-8}}{2}\right)\)</span>. This
+process is depicted in the figure below.
+</li>
+</ol>
 <p><br></p>
 <p align="center">
 <a href="https://github.com/amandaforde/winnerscurse_sims/blob/main/summary_2.jpg?raw=true" class="external-link">
 <img src="https://github.com/amandaforde/winnerscurse_sims/blob/main/summary_2.jpg?raw=true" width="100%"></a>
 </p>
 <p><br></p>
-<p>In order to reduce the variability in the final MR-SimSS causal
-effect estimate and ensure its stability, we suggest repeating this
-simulated sample splitting process many times, at least <span class="math inline">\(N_\text{iter} = 1,000\)</span> iterations.</p>
-<p>The final overall estimate for <span class="math inline">\(\hat\beta\)</span>, the exposure-outcome causal
-effect, is then equivalent to the average of the estimates generated by
-each iteration of the process.</p>
-<p>An estimate of the causal effect obtained at iteration <span class="math inline">\(k\)</span> of the simulated sample splitting
-process can be denoted by <span class="math inline">\(\hat\beta^{(k)}\)</span>. For example, we could
-have <span class="math inline">\(\hat\beta^{(k)} =
-\hat\beta^{(k)}_{\text{IVW}}\)</span> or <span class="math inline">\(\hat\beta^{(k)} =
-\hat\beta^{(k)}_{\text{RAPS}}\)</span>, dependent on which summary-level
-MR method is employed. The final estimate for the causal effect supplied
-by MR-SimSS is then denoted by <span class="math inline">\(\overline{\hat\beta} = \frac{1}{N_{\text{iter}}}
-\sum_{k=1}^{N_{\text{iter}}} \hat\beta^{(k)}\)</span>, the average of
-the estimates obtained at each iteration.</p>
+<ol start="8">
+<li>
+In order to <u>reduce the variability in the final MR-SimSS causal
+effect estimate and ensure its stability</u>, we suggest
+<strong>repeating this simulated sample splitting process many
+times</strong>, at least <span class="math inline">\(N_\text{iter} =
+1,000\)</span> iterations.
+</li>
+<li>
+The <strong>final value for <span class="math inline">\(\hat\beta\)</span></strong>, the estimated
+exposure-outcome causal effect, supplied by MR-SimSS is equivalent to
+the <strong>average of the estimates generated by each
+iteration</strong> of the process, i.e. <span class="math inline">\(\overline{\hat\beta} = \frac{1}{N_{\text{iter}}}
+\sum_{k=1}^{N_{\text{iter}}} \hat\beta^{(k)}\)</span>. Here, the
+estimate of the causal effect obtained at iteration <span class="math inline">\(k\)</span> of the simulated sample splitting
+process is denoted by <span class="math inline">\(\hat\beta^{(k)}\)</span>.
+</li>
+<li>
 <p>A suitable value for <span class="math inline">\(\text{se}(\overline{\hat\beta})\)</span>, the
-standard error of the MR-SimSS causal effect estimate, can be obtained
-using the following expression:</p>
-<p><span class="math display">\[\text{se}(\overline{\hat\beta}) =
+<strong>standard error of the MR-SimSS causal effect estimate</strong>,
+can be obtained using the following expression:</p>
+<span class="math display">\[\text{se}(\overline{\hat\beta}) =
 \sqrt{\frac{\sum_{k=1}^{N_{\text{iter}}} \left[ \left( \text{se}\left(
 \hat\beta^{(k)} \right)\right)^2 \right] - \sum_{k=1}^{N_{\text{iter}}}
 \left[ \hat\beta^{(k)} -
 \overline{\hat\beta}\right]^2}{N_\text{iter}}}\]</span> Note that <span class="math inline">\(\text{se}\left(\hat\beta^{(k)}\right)\)</span> is
 the standard error of the causal effect estimate at iteration <span class="math inline">\(k\)</span>, which is typically provided by the
-summary-level MR method of choice.</p>
+summary-level MR method of choice. More details regarding the expression
+for <span class="math inline">\(\text{se}(\overline{\hat\beta})\)</span>
+can be found <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html" class="external-link">here</a>.
+</li>
+</ol>
 <p><br></p>
 <p><span style="color: darkblue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong> The
-asymptotic conditional distribution equation suggests that in order to
-implement MR-SimSS, if the number of overlapping samples involved in the
-exposure and outcome GWASs, <span class="math inline">\(N_\text{overlap}\)</span>, is known to differ from
+asymptotic conditional distribution equation, given in Step 1, suggests
+that in order to implement MR-SimSS, if the number of overlapping
+samples involved in the exposure and outcome GWASs, <span class="math inline">\(N_\text{overlap}\)</span>, is known to differ from
 zero, <span class="math inline">\(N_\text{overlap} \neq 0\)</span>, then
 this number <span class="math inline">\(N_\text{overlap}\)</span> as
 well as the correlation between the exposure and outcome, <span class="math inline">\(\rho\)</span>, must be provided. In general, <span class="math inline">\(N_\text{overlap}\)</span> may be known, especially
 if the GWASs have been performed on a single fully overlapping sample,
 and an estimate for <span class="math inline">\(\rho\)</span> could be
-obtained from the literature. However, if neither <span class="math inline">\(N_\text{overlap}\)</span> nor an estimate for
-<span class="math inline">\(\rho\)</span> can be supplied, an
-alternative strategy is provided <a href="">here</a> which seeks to
-estimate a value for <span class="math inline">\(\lambda =
-\frac{N_\text{overlap}\rho}{\sqrt{N_X N_Y}}\)</span>, using only the
-available <strong>summary-level data of the genome-wide set of genetic
-variants</strong> i.e. <span class="math inline">\(\{
+obtained from the literature. However, especially when only GWAS summary
+statistics are available, it can often be difficult to know the value of
+<span class="math inline">\(N_\text{overlap}\)</span> or <span class="math inline">\(\rho\)</span>. Therefore, within its
+functionality, MR-SimSS also has an <strong>alternative strategy which
+seeks to estimate a value for <span class="math inline">\(\lambda =
+\frac{N_\text{overlap}\rho}{\sqrt{N_X N_Y}}\)</span></strong>, using
+only the available <strong>summary-level data of the <u>genome-wide
+set</u> of genetic variants</strong> i.e. <span class="math inline">\(\{
 \widehat{\gamma_j}, \widehat{\sigma_{X_j}}, \widehat{\Gamma_j},
-\widehat{\sigma_{Y_j}}\}\)</span>.</p>
+\widehat{\sigma_{Y_j}}\}\)</span>. Additional details regarding this
+approach, which is based on conditional likelihood, can be found <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html#estimating-the-correlation" class="external-link">here</a>.</p>
 <p><br></p>
-<p><span style="color: darkblue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong> It is
-mentioned that several iterations of our approach, ideally <span class="math inline">\(N_{\text{iter}} \approx 1000\)</span> iterations,
-is required in order to ensure a stable causal effect estimate.
+<p><span style="color: darkblue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong>
 Unfortunately, repeatedly simulating values for <span class="math inline">\(\{\gamma_{\pi_j}, \Gamma_{\pi_j}\}\)</span> and
 <span class="math inline">\(\{\gamma_{{(1-\pi)p}_j},
-\Gamma_{{(1-\pi)p}_j}\}\)</span> for SNPs <span class="math inline">\(j
-= 1, \dots ,N\)</span> several times can make MR-SimSS a computationally
-intensive process, especially in comparison with other summary-level MR
-methods. Recognising that irrespective of the genetic architecture of
-the exposure, there will likely be many variants which will never be
-selected across the <span class="math inline">\(N_\text{iter}\)</span>
-iterations, we therefore establish a subset of genetic variants
-according to the cumulative sums of their probabilities, <span class="math inline">\(f\left( z_{X_{\pi,j}} &gt; 5.45\right)\)</span>.
-Further details regarding can be found here.</p>
+\Gamma_{{(1-\pi)p}_j}\}\)</span> for thousands of genetic variants can
+make MR-SimSS a very computationally intensive process, especially in
+comparison with other summary-level MR methods. By recognising that
+irrespective of the genetic architecture of the exposure, there will
+likely be many variants which will never be selected across the <span class="math inline">\(N_\text{iter}\)</span> iterations, MR-SimSS
+contains a <strong>computationally efficient feature</strong> which
+first establishes a <strong>smaller subset of genetic variants</strong>
+that will then be entered into the main algorithm. This subset of
+genetic variants is constructed by first ordering all variants according
+to their probabilities, <span class="math inline">\(f\left(
+z_{X_{\pi,j}} &gt; 5.45\right)\)</span>, from smallest to largest and
+then, obtaining the <u>cumulative sum of these probabilities</u> for
+each variant. All SNPs with a cumulative probability greater than 0.05
+are included in the subset. This process ensures that for a single
+iteration of MR-SimSS, the <u>number of genetic instruments if the full
+set of SNPs is used and the number of instruments if merely the subset
+is used will be equal with probability at least 95%</u>. Further details
+regarding can be found <a href="https://amandaforde.github.io/mr.simss/articles/derive-MR-SimSS.html#reducing-the-set-of-variants" class="external-link">here</a>.</p>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="assumptions-made-by-mr-simss">Assumptions made by MR-SimSS<a class="anchor" aria-label="anchor" href="#assumptions-made-by-mr-simss"></a>
@@ -420,16 +488,335 @@ association estimates are computed with a great degree of
 accuracy</u>.</p>
 </li>
 </ul>
+<style type="text/css">
+   table,
+    th,
+    td {
+         border: 1px solid black;
+  font-size: 12.5px; 
+    }
+ 
+    th,
+    td {
+        padding: 8px;
+    }
+    td:nth-child(odd){
+    text-align: center;
+}
+    th {
+        background-color: #38d1a4;
+    }
+</style>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="notation">Notation<a class="anchor" aria-label="anchor" href="#notation"></a>
 </h3>
-<p><br></p>
-<p align="center">
-<a href="https://github.com/amandaforde/winnerscurse_MR/blob/main/table.jpg?raw=true" class="external-link">
-<img src="https://github.com/amandaforde/winnerscurse_MR/blob/main/table.jpg?raw=true" width="100%"></a>
-</p>
-<p><br></p>
+<table style="width:95%" class="table">
+<tr>
+<th>
+<strong>Symbol</strong>
+</th>
+<th>
+<strong>What does it represent?</strong>
+</th>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\beta\)</span>
+</td>
+<td>
+True causal effect of modifiable exposure on health-related outcome
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\hat\beta\)</span>
+</td>
+<td>
+<u>Estimated</u> exposure-outcome causal effect
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(X\)</span>
+</td>
+<td>
+Exposure
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(Y\)</span>
+</td>
+<td>
+Outcome
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(U\)</span>
+</td>
+<td>
+Unmeasured variables which confound the exposure-outcome relationship
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(G_j\)</span>
+</td>
+<td>
+Genotype of genetic variant <span class="math inline">\(j\)</span>,
+<span class="math inline">\(G_j \in \{0,1,2\}\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\gamma_j\)</span>
+</td>
+<td>
+True effect of genetic variant <span class="math inline">\(j\)</span> on
+the exposure
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\hat\gamma_j\)</span>
+</td>
+<td>
+<u>Estimated</u> association between genetic variant <span class="math inline">\(j\)</span> and the exposure
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\gamma_{*_j}}\)</span>
+</td>
+<td>
+<u>Estimated</u> association between genetic variant <span class="math inline">\(j\)</span> and the exposure in fraction <span class="math inline">\(*\)</span> of the full dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\sigma_{X_j}\)</span>
+</td>
+<td>
+True standard error of the variant-exposure association estimate, <span class="math inline">\(\widehat{\gamma_j}\)</span>, for variant <span class="math inline">\(j\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\sigma_{X_j}}\)</span>
+</td>
+<td>
+<u>Estimated</u> standard error of the variant-exposure association
+estimate, <span class="math inline">\(\widehat{\gamma_j}\)</span>, for
+variant <span class="math inline">\(j\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\sigma_{X_{*,j}}}\)</span>
+</td>
+<td>
+<u>Estimated</u> standard error of the variant-exposure association
+estimate, <span class="math inline">\(\widehat{\gamma_{*_j}}\)</span>,
+for variant <span class="math inline">\(j\)</span> in fraction <span class="math inline">\(*\)</span> of the full dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\Gamma_j}\)</span>
+</td>
+<td>
+<u>Estimated</u> association between genetic variant <span class="math inline">\(j\)</span> and the outcome
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\Gamma_{*_j}}\)</span>
+</td>
+<td>
+<u>Estimated</u> association between genetic variant <span class="math inline">\(j\)</span> and the outcome in fraction <span class="math inline">\(*\)</span> of the full dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\sigma_{Y_j}\)</span>
+</td>
+<td>
+True standard error of the variant-outcome association estimate, <span class="math inline">\(\widehat{\Gamma_j}\)</span>,for variant <span class="math inline">\(j\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\sigma_{Y_j}}\)</span>
+</td>
+<td>
+<u>Estimated</u> standard error of the variant-outcome association
+estimate, <span class="math inline">\(\widehat{\Gamma_j}\)</span>,for
+variant <span class="math inline">\(j\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\widehat{\sigma_{Y_{*,j}}}\)</span>
+</td>
+<td>
+<u>Estimated</u> standard error of the variant-outcome association
+estimate, <span class="math inline">\(\widehat{\Gamma_j}\)</span>,for
+variant <span class="math inline">\(j\)</span> in fraction <span class="math inline">\(*\)</span> of the full dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(n\)</span>
+</td>
+<td>
+Number of measured genetic variants
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(N\)</span>
+</td>
+<td>
+Number of participants in the full data set, i.e. number of individuals
+with genotype information, exposure and/or outcome measurements
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\{\mathbf{G},
+\mathbf{X},\mathbf{Y}\}\)</span>
+</td>
+<td>
+Full individual-level dataset in which <span class="math inline">\(\mathbf{G}\)</span> represents the matrix of
+genotype information for each genetic variant and participant,
+i.e. <span class="math inline">\(\mathbf{G} = \{\mathbf{G}_1, \dots,
+\mathbf{G}_N\}\in \mathbb{R}^{N\times n}\)</span>, where <span class="math inline">\(\mathbf{G}_j = [G_{1j}, \dots, G_{Nj}]^T\)</span>
+contains the genotype information for the <span class="math inline">\(j\)</span>th variant, <span class="math inline">\(\mathbf{X} = [X_1, \dots,X_N]^T\)</span> is the
+vector of measured exposures, and <span class="math inline">\(\mathbf{Y}
+= [Y_1, \dots, Y_N]^T\)</span> is the vector of outcome values
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\{\mathbf{G}_{*},
+\mathbf{X}_{*},\mathbf{Y}_{*}\}\)</span>
+</td>
+<td>
+Individual-level data set, similar to that above, but only containing
+data for those individuals in fraction <span class="math inline">\(*\)</span> of the full dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(N_\text{overlap}\)</span>
+</td>
+<td>
+Number of overlapping individuals, i.e. number of participants who have
+measured values for both outcome and exposure
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\pi\)</span>
+</td>
+<td>
+First fraction in which the full dataset is split into – fraction <span class="math inline">\(\pi\)</span> is used to select genetic instruments
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(p\)</span>
+</td>
+<td>
+Second fraction in which the full dataset is split into – fraction <span class="math inline">\(1-\pi\)</span> is split into fractions <span class="math inline">\(p\)</span> and <span class="math inline">\(1-p\)</span> to estimate variant-exposure and
+variant-outcome associations
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\rho\)</span>
+</td>
+<td>
+Correlation between the exposure and the outcome, i.e. <span class="math inline">\(\rho = \text{cor}(X,Y)\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(z_{X_{\pi,j}}\)</span>
+</td>
+<td>
+<span class="math inline">\(z\)</span>-statistic of variant <span class="math inline">\(j\)</span> in fraction <span class="math inline">\(\pi\)</span> of the dataset, i.e. <span class="math inline">\(z_{X_{\pi,j}} =
+\frac{\widehat{\gamma_{\pi_j}}}{\widehat{\sigma_{X_{\pi,j}}}}\)</span> -
+used to select genetic instruments
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(n_\text{sig}\)</span>
+</td>
+<td>
+Number of genetic instruments which have been selected using the
+(simulated) summary statistics from the first fraction, <span class="math inline">\(\pi\)</span>, of the dataset
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(N_\text{iter}\)</span>
+</td>
+<td>
+Number of iterations of sample splitting performed by MR-SimSS
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\hat\beta^{(k)}\)</span>
+</td>
+<td>
+Causal effect estimate produced by MR-SimSS on iteration <span class="math inline">\(k\)</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\overline{\hat\beta}\)</span>
+</td>
+<td>
+Final estimate for the exposure-outcome causal effect supplied by
+MR-SimSS, i.e. average of the estimates generated at each iteration
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\text{se}(\overline{\hat\beta})\)</span>
+</td>
+<td>
+Standard error of MR-SimSS causal effect estimate
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\text{se}\left(\hat\beta^{(k)}\right)\)</span>
+</td>
+<td>
+Standard error of causal effect estimate at iteration <span class="math inline">\(k\)</span>, generally supplied by chosen
+summary-level MR method
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(\lambda\)</span>
+</td>
+<td>
+Symbol representing <span class="math inline">\(\frac{N_{\text{overlap}}\rho}{\sqrt{N_X
+N_Y}}\)</span> in which <span class="math inline">\(N_X\)</span> is the
+number of individuals in the full dataset with measured exposures,
+i.e. exposure GWAS sample size, and <span class="math inline">\(N_Y\)</span> is the number of individuals in the
+full dataset with measured outcomes, i.e. outcome GWAS sample size
+</td>
+</tr>
+</table>
 </div>
   </div>
 
