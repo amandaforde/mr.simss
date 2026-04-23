@@ -1,49 +1,49 @@
-#'MR-SimSS main function
+#' MR-SimSS main function
 #'
-#'\code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which
-#'is a method based on simulated sample splitting in order to alleviate
-#'\emph{Winner's Curse} bias in MR causal effect estimates. It also takes into
-#'account sample overlap between the exposure and outcome GWASs. It uses GWAS
-#'summary statistics and works in combination with existing MR methods, such as
-#'IVW and MR-RAPS.
+#' \code{mr_simss} is the main function for the method, \strong{MR-SimSS}, which
+#' is a method based on simulated sample splitting in order to alleviate
+#' \emph{Winner's Curse} bias in MR causal effect estimates. It also takes into
+#' account sample overlap between the exposure and outcome GWASs. It uses GWAS
+#' summary statistics and works in combination with existing MR methods, such as
+#' IVW and MR-RAPS.
 #'
-#'@param data A data frame to be inputted by the user containing summary
+#' @param data A data frame to be inputted by the user containing summary
 #'  statistics from the exposure and outcome GWASs. It must have at least five
 #'  columns with column names \code{SNP}, \code{beta.exposure},
 #'  \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 #'  correspond to a unique SNP, identified by \code{SNP}.
-#'@param mr_method A string which specifies the MR method that MR-SimSS works in
+#' @param mr_method A string which specifies the MR method that MR-SimSS works in
 #'  combination with. It is possible to use any method outputted in the list
 #'  \code{TwoSampleMR::mr_method_list()$obj}. However, it is currently advised
 #'  that the user chooses \code{"mr_ivw"} or \code{"mr_raps"}. The default
 #'  setting is \code{mr_method="mr_ivw"}.
-#'@param threshold A numerical value which specifies the threshold used to
+#' @param threshold A numerical value which specifies the threshold used to
 #'  select instrument SNPs for MR at each iteration. The default setting is
 #'  \code{threshold=5e-8}. This value must be between 0 and 1.
-#'@param n.iter A numerical value which specifies the number of iterations of
+#' @param n.iter A numerical value which specifies the number of iterations of
 #'  the method, i.e. the number of times sample splits are randomly simulated.
 #'  The default setting is \code{n.iter=1000}.
-#'@param splits A numerical value that must be equal to 2 or 3, indicating
+#' @param splits A numerical value that must be equal to 2 or 3, indicating
 #'  whether splits of 2 or 3 should be simulated. It is recommended that in the
 #'  case of no overlap between the two GWASs that splits of 2 should be used
 #'  while in the presence of overlap, especially full overlap, splits of 3
 #'  should be used. The default setting is \code{splits=3}.
-#'@param pi A numerical value which determines the fraction of the first split
+#' @param pi A numerical value which determines the fraction of the first split
 #'  in both the 2 and 3 split approaches. This is the fraction that will be used
 #'  for SNP selection. The default setting is \code{pi=0.5}. This value must be
 #'  between 0 and 1.
-#'@param pi2 A numerical value which determines the fraction of the second split
+#' @param pi2 A numerical value which determines the fraction of the second split
 #'  in the 3 split approach. The default setting is \code{pi2=0.5}. This value
 #'  must be between 0 and 1.
-#'@param subset A logical which permits the user to perform this method with
+#' @param subset A logical which permits the user to perform this method with
 #'  either the original complete set of SNPs or a subset of SNPs in order to
 #'  reduce computational time. The default setting is \code{subset=TRUE}.
-#'@param sub.cut A numerical value required if \code{subset=TRUE}, which ensures
+#' @param sub.cut A numerical value required if \code{subset=TRUE}, which ensures
 #'  that for a single iteration of our method, the number of instruments
 #'  selected if the full set of SNPs is used and the number of instruments if
 #'  merely the subset is used will be equal with probability at least
 #'  \code{1-sub.cut}.
-#'@param est.lambda A logical which allows the user to specify if they want to use
+#' @param est.lambda A logical which allows the user to specify if they want to use
 #'  the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
 #'  term used to describe the correlation between the SNP-outcome and
 #'  SNP-exposure effect sizes, with the data stored in \code{data}. This correlation is affected by the number of
@@ -51,33 +51,33 @@
 #'  exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
 #'  if the fraction of overlap and the correlation between exposure and outcome
 #'  are unknown. The default setting is \code{est.lambda=TRUE}.
-#'@param n.exposure A numerical value to be specified by the user which is equal
+#' @param n.exposure A numerical value to be specified by the user which is equal
 #'  to the number of individuals that were in the exposure GWAS. It should be
 #'  specified by the user if \code{est.lambda=FALSE}. The default setting is
 #'  \code{n.exposure=1}.
-#'@param n.outcome A numerical value to be specified by the user which is equal
+#' @param n.outcome A numerical value to be specified by the user which is equal
 #'  to the number of individuals that were in the outcome GWAS. It should be
 #'  specified by the user if \code{est.lambda=FALSE}. The default setting is
 #'  \code{n.outcome=1}.
-#'@param n.overlap A numerical value to be specified by the user which is equal
+#' @param n.overlap A numerical value to be specified by the user which is equal
 #'  to the number of individuals that were in both the exposure and outcome
 #'  GWAS. It should be specified by the user if \code{est.lambda=FALSE}. The
 #'  default setting is \code{n.overlap=1}. The function requires that this value
 #'  is less than or equal to the minimum of \code{n.exposure} and
 #'  \code{n.outcome}.
-#'@param cor.xy A numerical value to be specified by the user which is equal to
+#' @param cor.xy A numerical value to be specified by the user which is equal to
 #'  the observed correlation between the exposure and the outcome. This value
 #'  must be between -1 and 1. It should be specified by the user if
 #'  \code{est.lambda=FALSE}. The default setting is \code{cor.xy=0}. If this
 #'  value is unknown, the user is encouraged to use the function
 #'  \code{est_lambda}.
-#'@param lambda.thresh A value which is used when estimating \emph{lambda} to
+#' @param lambda.thresh A value which is used when estimating \emph{lambda} to
 #'  obtain a subset of SNPs which have absolute \emph{z}-statistics for both exposure and outcome GWASs less than
 #'  this value. The method then assumes that both of the true SNP-outcome and
 #'  SNP-exposure effect sizes of each SNP in this subset are approximately 0.
 #'  The default setting is \code{lambda.thresh=0.5}.
 #'
-#'@return A list containing two elements, \code{summary} and \code{results}.
+#' @return A list containing two elements, \code{summary} and \code{results}.
 #'  \code{summary} is a data frame with one row which outputs \code{b}, the
 #'  estimated causal effect of exposure on outcome obtained using the
 #'  \strong{MR-SimSS} method, as well as \code{se}, the associated standard
@@ -87,11 +87,11 @@
 #'  data frame which contains the output from each iteration. It is in a similar
 #'  style as the output from using the function \code{mr} from the
 #'  \code{TwoSampleMR} R package.
-#'@seealso
-#'\url{https://amandaforde.github.io/mr.simss/articles/perform-MR-SimSS.html}
-#'for illustration of the use of \code{mr_simss} with a toy data set and further
-#'information regarding this MR method.
-#'@export
+#' @seealso
+#' \url{https://amandaforde.github.io/mr.simss/articles/perform-MR-SimSS.html}
+#' for illustration of the use of \code{mr_simss} with a toy data set and further
+#' information regarding this MR method.
+#' @export
 #'
 
 mr_simss <- function(data,mr_method="mr_ivw",threshold=5e-8,n.iter=1000,splits=3,pi=0.5,pi2=0.5,subset=TRUE,sub.cut=0.05,est.lambda=TRUE,n.exposure=1,n.outcome=1,n.overlap=1,cor.xy=0,

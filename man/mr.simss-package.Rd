@@ -2,8 +2,8 @@
 % Please edit documentation in R/mr.simss-package.R
 \docType{package}
 \name{mr.simss-package}
-\alias{mr.simss-package}
 \alias{mr.simss}
+\alias{mr.simss-package}
 \title{mr.simss: Mendelian Randomisation (MR) method that combats Winner's Curse using a simulated sample splitting approach}
 \description{
 A package designed to provide users with a method, namely \strong{MR-SimSS}, which uses simulated sample splitting in order to alleviate
@@ -12,4 +12,17 @@ uses summary statistics from genome-wide association studies and works in combin
 }
 \details{
 \strong{Full documentation available here:} \href{https://amandaforde.github.io/mr.simss/}{https://amandaforde.github.io/mr.simss/}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/amandaforde/mr.simss}
+  \item \url{https://mrcieu.r-universe.dev/mr.simss}
+  \item Report bugs at \url{https://github.com/amandaforde/mr.simss/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Amanda Forde \email{amanda.forde@universityofgalway.ie} (\href{https://orcid.org/0000-0002-7940-3413}{ORCID})
+
 }

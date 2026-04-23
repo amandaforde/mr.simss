@@ -11,24 +11,24 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.2.3
-URL: https://github.com/amandaforde/mr.simss
+RoxygenNote: 7.3.3
+URL: https://github.com/amandaforde/mr.simss, https://mrcieu.r-universe.dev/mr.simss
 BugReports: https://github.com/amandaforde/mr.simss/issues
-Imports: 
+Imports:
     dplyr,
-    doParallel,
-    foreach,
     magrittr,
-    mr.raps,
+    mr.raps (>= 0.3),
     stats,
-    parallel,
     pracma,
     tibble,
     TwoSampleMR,
     abind
-Remotes: 
+Remotes:
+    qingyuanzhao/mr.raps,
     MRCIEU/TwoSampleMR
-Suggests: 
+Suggests:
+    ggplot2,
     knitr,
+    MASS,
     rmarkdown
 VignetteBuilder: knitr

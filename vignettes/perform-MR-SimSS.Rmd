@@ -163,7 +163,7 @@ res.simss.raps
 
 ## Classical MR-RAPS
 data_sig <- data %>% dplyr::filter(2*(stats::pnorm(abs(data$beta.exposure/data$se.exposure), lower.tail=FALSE)) < 5e-8)
-res.raps <- mr.raps::mr.raps(data_sig$beta.exposure,data_sig$beta.outcome,data_sig$se.exposure,data_sig$se.outcome)
+res.raps <- mr.raps::mr.raps.mle(data_sig$beta.exposure,data_sig$beta.outcome,data_sig$se.exposure,data_sig$se.outcome)
 res.raps <- data.frame(method="mr_raps", nsnp=nrow(data_sig), b=res.raps$beta.hat, se=res.raps$beta.se, pval=res.raps$beta.p.value)
 res.raps
 
@@ -279,7 +279,7 @@ The following code demonstrates our workflow for obtaining required data files o
 First, raw VCF files for both exposure (UKBB HDL) and outcome (GLGC HDL) are downloaded from [https://opengwas.io/datasets/ieu-b-109](https://opengwas.io/datasets/ieu-b-109) and [https://opengwas.io/datasets/ebi-a-GCST002223](https://opengwas.io/datasets/ebi-a-GCST002223), respectively, and stored in `data` folder.
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, eval=FALSE, warning=FALSE, message=FALSE}
 ## Load required packages:
 library(TwoSampleMR)
 library(gwasglue)
@@ -299,13 +299,13 @@ HDL2.OUT <- gwasglue::gwasvcf_to_TwoSampleMR(HDL2.raw, type="outcome")
 ```
 
 
-```{r, echo=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 HDL1.EXP <-read.csv("C:/Users/GenDataSci025/winnerscurse_MR/data/EXP-HDL-ieu-b-109.csv")
 HDL2.OUT <- read.csv("C:/Users/GenDataSci025/winnerscurse_MR/data/OUT-HDL-ebi-a-GCST002223.csv")
 ```
 
 
-```{r, message=FALSE}
+```{r, eval=FALSE, message=FALSE}
 ## Download set of pruned variants
 pruned_SNPs <- read.table('https://raw.githubusercontent.com/amandaforde/winnerscurse_MR/refs/heads/main/pruned_SNPs.txt',header=TRUE)
 
@@ -327,13 +327,13 @@ SimSS3_RAPS$summary
 
 
 
-```{r}
+```{r, eval=FALSE}
 ## Classical two-sample MR methods
 MR_select <- MR_data[MR_data$pval.exposure < 5e-8,] # genome-wide significance threshold
 TwoSampleMR::mr(MR_select,method_list=c("mr_ivw","mr_weighted_median","mr_weighted_mode","mr_egger_regression"))[,5:9]
 
 ## Classical MR-RAPS
-res_RAPS <- mr.raps::mr.raps(MR_select$beta.exposure, MR_select$beta.outcome, MR_select$se.exposure, MR_select$se.outcome)
+res_RAPS <- mr.raps::mr.raps.mle(MR_select$beta.exposure, MR_select$beta.outcome, MR_select$se.exposure, MR_select$se.outcome)
 data.frame(method=c("MR RAPS"),nsnp=c(nrow(MR_select)),b=c(res_RAPS$beta.hat),se=c(res_RAPS$beta.se),pval=c(res_RAPS$beta.p.value))
 
 ```
@@ -341,5 +341,5 @@ data.frame(method=c("MR RAPS"),nsnp=c(nrow(MR_select)),b=c(res_RAPS$beta.hat),se
 
 <br /> 
 
-In the outputted results, we see that out of all six methods, `SimSS-RAPS` provides a causal effect estimate closest to the true value of 1 (`r round(SimSS3_RAPS$summary$b,4)`). Furthermore, its standard error of `r round(SimSS3_RAPS$summary$se,4)` is of comparable magnitude to that of both the classical IVW and MR-RAPS approaches.
+In the outputted results, we see that out of all six methods, `SimSS-RAPS` provides a causal effect estimate closest to the true value of 1. Furthermore, its standard error is of comparable magnitude to that of both the classical IVW and MR-RAPS approaches.
 

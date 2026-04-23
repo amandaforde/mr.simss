@@ -7,7 +7,4 @@
 #'
 #' \strong{Full documentation available here:} \href{https://amandaforde.github.io/mr.simss/}{https://amandaforde.github.io/mr.simss/}
 #'
-#' @name mr.simss-package
-#' @aliases mr.simss
-#' @docType package
-NULL
+"_PACKAGE"

@@ -6,21 +6,19 @@
 \usage{
 mr_simss(
   data,
-  subset = FALSE,
+  mr_method = "mr_ivw",
+  threshold = 5e-08,
+  n.iter = 1000,
+  splits = 3,
+  pi = 0.5,
+  pi2 = 0.5,
+  subset = TRUE,
   sub.cut = 0.05,
   est.lambda = TRUE,
   n.exposure = 1,
   n.outcome = 1,
   n.overlap = 1,
   cor.xy = 0,
-  n.iter = 1000,
-  splits = 2,
-  pi = 0.5,
-  pi2 = 0.5,
-  threshold = 5e-08,
-  mr_method = "mr_ivw",
-  parallel = TRUE,
-  n.cores = NULL,
   lambda.thresh = 0.5
 )
 }
@@ -31,9 +29,38 @@ columns with column names \code{SNP}, \code{beta.exposure},
 \code{beta.outcome}, \code{se.exposure} and \code{se.outcome}. Each row must
 correspond to a unique SNP, identified by \code{SNP}.}
 
+\item{mr_method}{A string which specifies the MR method that MR-SimSS works in
+combination with. It is possible to use any method outputted in the list
+\code{TwoSampleMR::mr_method_list()$obj}. However, it is currently advised
+that the user chooses \code{"mr_ivw"} or \code{"mr_raps"}. The default
+setting is \code{mr_method="mr_ivw"}.}
+
+\item{threshold}{A numerical value which specifies the threshold used to
+select instrument SNPs for MR at each iteration. The default setting is
+\code{threshold=5e-8}. This value must be between 0 and 1.}
+
+\item{n.iter}{A numerical value which specifies the number of iterations of
+the method, i.e. the number of times sample splits are randomly simulated.
+The default setting is \code{n.iter=1000}.}
+
+\item{splits}{A numerical value that must be equal to 2 or 3, indicating
+whether splits of 2 or 3 should be simulated. It is recommended that in the
+case of no overlap between the two GWASs that splits of 2 should be used
+while in the presence of overlap, especially full overlap, splits of 3
+should be used. The default setting is \code{splits=3}.}
+
+\item{pi}{A numerical value which determines the fraction of the first split
+in both the 2 and 3 split approaches. This is the fraction that will be used
+for SNP selection. The default setting is \code{pi=0.5}. This value must be
+between 0 and 1.}
+
+\item{pi2}{A numerical value which determines the fraction of the second split
+in the 3 split approach. The default setting is \code{pi2=0.5}. This value
+must be between 0 and 1.}
+
 \item{subset}{A logical which permits the user to perform this method with
 either the original complete set of SNPs or a subset of SNPs in order to
-reduce computational time. The default setting is \code{subset=FALSE}.}
+reduce computational time. The default setting is \code{subset=TRUE}.}
 
 \item{sub.cut}{A numerical value required if \code{subset=TRUE}, which ensures
 that for a single iteration of our method, the number of instruments
@@ -44,7 +71,7 @@ merely the subset is used will be equal with probability at least
 \item{est.lambda}{A logical which allows the user to specify if they want to use
 the function, \code{est_lambda}, to obtain an estimate for \emph{lambda}, a
 term used to describe the correlation between the SNP-outcome and
-SNP-exposure effect sizes. This correlation is affected by the number of
+SNP-exposure effect sizes, with the data stored in \code{data}. This correlation is affected by the number of
 overlapping samples between the two GWASs and the correlation between the
 exposure and the outcome. Thus, it is recommended to use \code{est_lambda}
 if the fraction of overlap and the correlation between exposure and outcome
@@ -73,45 +100,6 @@ must be between -1 and 1. It should be specified by the user if
 \code{est.lambda=FALSE}. The default setting is \code{cor.xy=0}. If this
 value is unknown, the user is encouraged to use the function
 \code{est_lambda}.}
-
-\item{n.iter}{A numerical value which specifies the number of iterations of
-the method, i.e. the number of times sample splits are randomly simulated.
-The default setting is \code{n.iter=1000}.}
-
-\item{splits}{A numerical value that must be equal to 2 or 3, indicating
-whether splits of 2 or 3 should be simulated. It is recommended that in the
-case of no overlap between the two GWASs that splits of 2 should be used
-while in the presence of overlap, especially full overlap, splits of 3
-should be used. The default setting is \code{splits=2}.}
-
-\item{pi}{A numerical value which determines the fraction of the first split
-in both the 2 and 3 split approaches. This is the fraction that will be used
-for SNP selection. The default setting is \code{pi=0.5}. This value must be
-between 0 and 1.}
-
-\item{pi2}{A numerical value which determines the fraction of the second split
-in the 3 split approach. The default setting is \code{pi2=0.5}. This value
-must be between 0 and 1.}
-
-\item{threshold}{A numerical value which specifies the threshold used to
-select instrument SNPs for MR at each iteration. The default setting is
-\code{threshold=5e-8}. This value must be between 0 and 1.}
-
-\item{mr_method}{A string which specifies the MR method that MR-SimSS works in
-combination with. It is possible to use any method outputted in the list
-\code{TwoSampleMR::mr_method_list()$obj}. However, it is currently advised
-that the user chooses \code{"mr_ivw"} or \code{"mr_raps"}. The default
-setting is \code{mr_method="mr_ivw"}.}
-
-\item{parallel}{A logical value which allows the user to specify if they wish
-to use this function in parallel or in series. The default setting is
-\code{parallel=TRUE}. It is advisable to use this default, especially when
-\code{n.iter} is large.}
-
-\item{n.cores}{A numerical value which determines how many cores will be used
-if \code{parallel=TRUE}. This value should be supplied by the user if they
-wish to use less cores than the output of \code{parallel::detectCores()-1}.
-The default setting is \code{n.cores=NULL}.}
 
 \item{lambda.thresh}{A value which is used when estimating \emph{lambda} to
 obtain a subset of SNPs which have absolute \emph{z}-statistics for both exposure and outcome GWASs less than
